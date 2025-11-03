@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackonstar AI — Earn Tokens, Chat & Grow</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.85);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 22px;
+      color: #00ffd5;
+      letter-spacing: 1px;
+    }
+
+    header nav a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    header nav a:hover {
+      color: #00ffd5;
+    }
+
+    section {
+      padding: 100px 20px;
+      text-align: center;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #00ffd5, #007fff);
+      color: #000;
+      padding: 120px 20px;
+      border-radius: 0 0 40px 40px;
+    }
+
+    .hero h2 {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: #111;
+      max-width: 600px;
+      margin: 10px auto 20px;
+    }
+
+    .login-btn {
+      background: #000;
+      color: #00ffd5;
+      border: 2px solid #00ffd5;
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .login-btn:hover {
+      background: #00ffd5;
+      color: #000;
+    }
+
+    .stats {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #000;
+    }
+
+    .features {
+      background: #0f0f0f;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 60px 20px;
+    }
+
+    .feature-box {
+      background: #151515;
+      border-radius: 15px;
+      padding: 25px;
+      transition: 0.3s;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-5px);
+      border: 1px solid #00ffd5;
+    }
+
+    .feature-box h3 {
+      color: #00ffd5;
+      margin-bottom: 10px;
+    }
+
+    .testimonials {
+      background: #0a0a0a;
+      padding: 60px 20px;
+    }
+
+    .testimonials h2 {
+      color: #00ffd5;
+      margin-bottom: 20px;
+    }
+
+    .testimonial {
+      background: #111;
+      border-left: 4px solid #00ffd5;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 600px;
+      color: #aaa;
+      border-radius: 10px;
+    }
+
+    footer {
+      background: #000;
+      color: #888;
+      text-align: center;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    .privacy-box {
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 40px;
+      color: #aaa;
+      font-size: 13px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Blackonstar AI</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Earn</a>
+      <a href="#">Support</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Join Blackonstar AI 🌌</h2>
+    <p>Talk to AI, earn BK tokens, invite friends, and grow in our new digital world.</p>
+    <button class="login-btn" id="loginBtn">Login with Telegram</button>
+    <div class="stats" id="userStats">👥 Loading users...</div>
+  </section>
+
+  <section class="features">
+    <div class="feature-box">
+      <h3>💬 Chat Freely</h3>
+      <p>Talk to your AI anytime, about anything — it’s your personal space to think, create and grow.</p>
+    </div>
+    <div class="feature-box">
+      <h3>💎 Earn Tokens</h3>
+      <p>Every invite counts. Refer friends and earn BK Tokens that unlock AI premium features.</p>
+    </div>
+    <div class="feature-box">
+      <h3>🏆 Leaderboard</h3>
+      <p>Climb up the ranks, show off your referrals, and be featured among top earners!</p>
+    </div>
+  </section>
+
+  <section class="testimonials">
+    <h2>What Users Say 💭</h2>
+    <div class="testimonial">“This AI changed how I learn — and I even earned tokens!”</div>
+    <div class="testimonial">“Clean, fast and feels like home. I love it.”</div>
+  </section>
+
+  <section class="privacy-box">
+    <h3>🔒 Privacy & Safety</h3>
+    <p>
+      When you login, we only collect your Telegram <b>username</b>, <b>ID</b>, and <b>name</b>.
+      We never access your chats or private data.
+      You can revoke access anytime via Telegram settings.
+    </p>
+  </section>
+
+  <footer>
+    © 2025 Blackonstar AI — Built with ❤️ to empower users.
+  </footer>
+
+  <script async src="https://telegram.org/js/telegram-widget.js?7"
+    data-telegram-login="BlackonstarAI_Bot"
+    data-size="large"
+    data-userpic="false"
+    data-request-access="write"
+    data-onauth="onTelegramAuth(user)">
+  </script>
+
+  <script>
+    // Update user count
+    async function updateUsers() {
+      try {
+        const res = await fetch('/api/users_count');
+        const data = await res.json();
+        document.getElementById('userStats').textContent = `👥 Total users: ${data.total_users}`;
+      } catch (err) {
+        document.getElementById('userStats').textContent = "⚠️ Failed to fetch user count.";
+      }
+    }
+
+    // Telegram auth callback
+    async function onTelegramAuth(user) {
+      const payload = {
+        id: user.id,
+        username: user.username,
+        name: user.first_name + (user.last_name ? " " + user.last_name : "")
+      };
+
+      // Send user to Flask API
+      try {
+        await fetch('/api/add_user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        alert(`Welcome ${payload.username || payload.name}! Redirecting to your dashboard...`);
+        window.location.href = '/dashboard'; // redirect (you’ll create this route next)
+      } catch (err) {
+        alert("Login failed, please try again.");
+      }
+    }
+
+    updateUsers();
+  </script>
+</body>
+</html>
