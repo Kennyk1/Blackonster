@@ -2,20 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blackonstar AI — Earn Tokens, Chat & Grow</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: "Poppins", sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
 
     body {
       background: #0a0a0a;
       color: #fff;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
@@ -29,136 +34,215 @@
       justify-content: space-between;
       align-items: center;
       z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,255,213,0.1);
     }
 
     header h1 {
-      font-size: 22px;
+      font-size: 24px;
       color: #00ffd5;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      font-weight: 600;
+      user-select: none;
     }
 
     header nav a {
-      color: #fff;
-      margin-left: 20px;
+      color: #ccc;
+      margin-left: 25px;
       text-decoration: none;
-      transition: 0.3s;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.3s ease;
+      user-select: none;
     }
 
     header nav a:hover {
       color: #00ffd5;
     }
 
-    section {
-      padding: 100px 20px;
+    main {
+      flex: 1;
+      padding-top: 100px;
       text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
     }
 
     .hero {
       background: linear-gradient(120deg, #00ffd5, #007fff);
       color: #000;
-      padding: 120px 20px;
-      border-radius: 0 0 40px 40px;
+      padding: 140px 30px 100px;
+      border-radius: 0 0 50px 50px;
+      box-shadow: 0 8px 20px rgba(0, 255, 213, 0.3);
+      user-select: none;
     }
 
     .hero h2 {
-      font-size: 34px;
-      margin-bottom: 10px;
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      letter-spacing: 1.2px;
+      line-height: 1.2;
     }
 
     .hero p {
-      font-size: 17px;
+      font-size: 18px;
       color: #111;
-      max-width: 600px;
-      margin: 10px auto 20px;
+      max-width: 640px;
+      margin: 0 auto 40px;
+      line-height: 1.5;
     }
 
-    .login-btn {
-      background: #000;
-      color: #00ffd5;
-      border: 2px solid #00ffd5;
-      padding: 12px 25px;
-      border-radius: 10px;
-      font-size: 16px;
+    .get-started-btn {
+      background: #ff3b3b;
+      color: #fff;
+      border: none;
+      padding: 16px 50px;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 6px 15px rgba(255, 59, 59, 0.5);
+      user-select: none;
     }
 
-    .login-btn:hover {
-      background: #00ffd5;
-      color: #000;
+    .get-started-btn:hover {
+      background: #e03131;
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(224, 49, 49, 0.7);
     }
 
     .stats {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #000;
+      margin-top: 25px;
+      font-size: 19px;
+      color: #111;
+      font-weight: 600;
+      user-select: none;
     }
 
     .features {
-      background: #0f0f0f;
+      background: #121212;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 60px 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      padding: 70px 20px 90px;
+      max-width: 900px;
+      margin: 0 auto;
+      user-select: none;
     }
 
     .feature-box {
-      background: #151515;
-      border-radius: 15px;
-      padding: 25px;
-      transition: 0.3s;
+      background: #1f1f1f;
+      border-radius: 18px;
+      padding: 30px 25px;
+      box-shadow: 0 4px 12px rgba(0,255,213,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
     }
 
     .feature-box:hover {
-      transform: translateY(-5px);
-      border: 1px solid #00ffd5;
+      transform: translateY(-8px);
+      box-shadow: 0 10px 30px rgba(0,255,213,0.4);
     }
 
     .feature-box h3 {
       color: #00ffd5;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
+      font-weight: 700;
+      font-size: 22px;
+      user-select: text;
+    }
+
+    .feature-box p {
+      color: #ccc;
+      font-size: 16px;
+      line-height: 1.5;
+      user-select: text;
     }
 
     .testimonials {
       background: #0a0a0a;
-      padding: 60px 20px;
+      padding: 70px 20px 90px;
+      max-width: 900px;
+      margin: 0 auto;
+      user-select: none;
     }
 
     .testimonials h2 {
       color: #00ffd5;
-      margin-bottom: 20px;
+      margin-bottom: 32px;
+      font-weight: 700;
+      font-size: 28px;
+      user-select: text;
     }
 
     .testimonial {
       background: #111;
-      border-left: 4px solid #00ffd5;
-      padding: 15px;
-      margin: 10px auto;
-      max-width: 600px;
+      border-left: 5px solid #00ffd5;
+      padding: 18px 22px;
+      margin: 14px auto;
+      max-width: 650px;
       color: #aaa;
-      border-radius: 10px;
+      border-radius: 14px;
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.5;
+      user-select: text;
+    }
+
+    .privacy-box {
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 14px;
+      padding: 22px 30px;
+      margin: 50px auto 60px;
+      max-width: 700px;
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.6;
+      user-select: text;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    .privacy-box h3 {
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #00ffd5;
     }
 
     footer {
       background: #000;
       color: #888;
       text-align: center;
-      padding: 20px;
-      font-size: 13px;
+      padding: 22px 20px;
+      font-size: 14px;
+      user-select: none;
+      border-top: 1px solid #222;
     }
 
-    .privacy-box {
-      background: #1b1b1b;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 40px;
-      color: #aaa;
-      font-size: 13px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.5;
+    @media (max-width: 480px) {
+      .hero h2 {
+        font-size: 28px;
+      }
+      .hero p {
+        font-size: 16px;
+      }
+      .get-started-btn {
+        padding: 14px 40px;
+        font-size: 16px;
+      }
+      .features {
+        grid-template-columns: 1fr;
+        padding: 50px 15px 70px;
+      }
+      .feature-box {
+        padding: 22px 20px;
+      }
+      .testimonials {
+        padding: 50px 15px 70px;
+      }
     }
   </style>
 </head>
@@ -173,91 +257,68 @@
     </nav>
   </header>
 
-  <section class="hero">
-    <h2>Join Blackonstar AI 🌌</h2>
-    <p>Talk to AI, earn BK tokens, invite friends, and grow in our new digital world.</p>
-    <button class="login-btn" id="loginBtn">Login with Telegram</button>
-    <div class="stats" id="userStats">👥 Loading users...</div>
-  </section>
+  <main>
+    <section class="hero" aria-label="Hero section">
+      <h2>Join Blackonstar AI 🌌</h2>
+      <p>Talk to AI, earn BK tokens, invite friends, and grow in our new digital world.</p>
+      <button class="get-started-btn" id="getStartedBtn" aria-label="Get started and sign up">Get Started</button>
+      <div class="stats" id="userStats">👥 Loading users...</div>
+    </section>
 
-  <section class="features">
-    <div class="feature-box">
-      <h3>💬 Chat Freely</h3>
-      <p>Talk to your AI anytime, about anything — it’s your personal space to think, create and grow.</p>
-    </div>
-    <div class="feature-box">
-      <h3>💎 Earn Tokens</h3>
-      <p>Every invite counts. Refer friends and earn BK Tokens that unlock AI premium features.</p>
-    </div>
-    <div class="feature-box">
-      <h3>🏆 Leaderboard</h3>
-      <p>Climb up the ranks, show off your referrals, and be featured among top earners!</p>
-    </div>
-  </section>
+    <section class="features" aria-label="Features">
+      <div class="feature-box" tabindex="0">
+        <h3>💬 Chat Freely</h3>
+        <p>Talk to your AI anytime, about anything — it’s your personal space to think, create and grow.</p>
+      </div>
+      <div class="feature-box" tabindex="0">
+        <h3>💎 Earn Tokens</h3>
+        <p>Every invite counts. Refer friends and earn BK Tokens that unlock AI premium features.</p>
+      </div>
+      <div class="feature-box" tabindex="0">
+        <h3>🏆 Leaderboard</h3>
+        <p>Climb up the ranks, show off your referrals, and be featured among top earners!</p>
+      </div>
+    </section>
 
-  <section class="testimonials">
-    <h2>What Users Say 💭</h2>
-    <div class="testimonial">“This AI changed how I learn — and I even earned tokens!”</div>
-    <div class="testimonial">“Clean, fast and feels like home. I love it.”</div>
-  </section>
+    <section class="testimonials" aria-label="User testimonials">
+      <h2>What Users Say 💭</h2>
+      <div class="testimonial" tabindex="0">“This AI changed how I learn — and I even earned tokens!”</div>
+      <div class="testimonial" tabindex="0">“Clean, fast and feels like home. I love it.”</div>
+    </section>
 
-  <section class="privacy-box">
-    <h3>🔒 Privacy & Safety</h3>
-    <p>
-      When you login, we only collect your Telegram <b>username</b>, <b>ID</b>, and <b>name</b>.
-      We never access your chats or private data.
-      You can revoke access anytime via Telegram settings.
-    </p>
-  </section>
+    <section class="privacy-box" aria-label="Privacy and safety information">
+      <h3>🔒 Privacy & Safety</h3>
+      <p>
+        When you login, we only collect your Telegram <b>username</b>, <b>ID</b>, and <b>name</b>.
+        We never access your chats or private data.
+        You can revoke access anytime via Telegram settings.
+      </p>
+    </section>
+  </main>
 
   <footer>
     © 2025 Blackonstar AI — Built with ❤️ to empower users.
   </footer>
 
-  <script async src="https://telegram.org/js/telegram-widget.js?7"
-    data-telegram-login="BlackonstarAI_Bot"
-    data-size="large"
-    data-userpic="false"
-    data-request-access="write"
-    data-onauth="onTelegramAuth(user)">
-  </script>
-
   <script>
-    // Update user count
+    // Redirect to signup.html on button click
+    document.getElementById('getStartedBtn').addEventListener('click', () => {
+      window.location.href = 'signup.html';
+    });
+
+    // Update user count (dummy example, replace with real API)
     async function updateUsers() {
       try {
         const res = await fetch('/api/users_count');
         const data = await res.json();
         document.getElementById('userStats').textContent = `👥 Total users: ${data.total_users}`;
-      } catch (err) {
+      } catch {
         document.getElementById('userStats').textContent = "⚠️ Failed to fetch user count.";
-      }
-    }
-
-    // Telegram auth callback
-    async function onTelegramAuth(user) {
-      const payload = {
-        id: user.id,
-        username: user.username,
-        name: user.first_name + (user.last_name ? " " + user.last_name : "")
-      };
-
-      // Send user to Flask API
-      try {
-        await fetch('/api/add_user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        alert(`Welcome ${payload.username || payload.name}! Redirecting to your dashboard...`);
-        window.location.href = '/dashboard'; // redirect (you’ll create this route next)
-      } catch (err) {
-        alert("Login failed, please try again.");
       }
     }
 
     updateUsers();
   </script>
 </body>
-</html>
+      </html>
+  
