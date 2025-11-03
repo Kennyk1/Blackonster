@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Supabase Minimal Signup</title>
+</head>
+<body>
+  <h2>Sign Up</h2>
+  <form id="signup-form">
+    <input type="email" id="email" placeholder="Email" required /><br /><br />
+    <input type="password" id="password" placeholder="Password" required /><br /><br />
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const SUPABASE_URL = 'https://nnixqnoxlhdncoppukvw.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uaXhxbm94bGhkbmNvcHB1a3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MzMyNjIsImV4cCI6MjA3NjQwOTI2Mn0.F2vIAkiX29Bqe7jpJhYPRzjUNJ3n0Fs3Emca-8I9JuE'
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    const form = document.getElementById('signup-form')
+    const message = document.getElementById('message')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const email = document.getElementById('email').value
+      const password = document.getElementById('password').value
+
+      message.textContent = 'Signing up...'
+
+      const { data, error } = await supabase.auth.signUp({ email, password })
+
+      if (error) {
+        message.textContent = 'Error: ' + error.message
+      } else {
+        message.textContent = 'Sign up successful! Redirecting to login...'
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'login.html'  // Change this URL if needed
+        }, 2000)
+      }
+    })
+  </script>
+</body>
+</html>
