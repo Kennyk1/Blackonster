@@ -300,7 +300,7 @@
             .upsert({
               id: data.user.id,
               email,
-              full_name: name,
+              display_name: name,
               invitation_code: invitationCode || null,
               updated_at: new Date().toISOString()
             }, { onConflict: 'id' })
