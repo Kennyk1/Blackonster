@@ -727,7 +727,7 @@
         // Fetch user referral code and stats
         const { data: userData, error: userError } = await supabase
           .from('users')
-          .select('referral_code, referred_count, bk_tokens')
+          .select('referral_code, referral_count, bk_tokens')
           .eq('id', currentUser.id)
           .single()
         
@@ -805,8 +805,8 @@
       try {
         const { data: leaders, error } = await supabase
           .from('users')
-          .select('display_name, referred_count')
-          .order('referred_count', { ascending: false })
+          .select('display_name, referral_count')
+          .order('referral_count', { ascending: false })
           .limit(10)
         
         if (error) throw error
