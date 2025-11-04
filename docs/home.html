@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blackonstar AI — Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Loading Screen Styles */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loading-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .loading-circle::before,
+    .loading-circle::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .loading-circle::before {
+      width: 100%;
+      height: 100%;
+      background: conic-gradient(
+        #00a2ff, #00ffd5, #ff00aa, #ff3b3b, #00a2ff
+      );
+      mask: radial-gradient(transparent 55%, #000 56%);
+      -webkit-mask: radial-gradient(transparent 55%, #000 56%);
+      animation: rotate 2s linear infinite;
+    }
+
+    .loading-circle::after {
+      width: 90%;
+      height: 90%;
+      background: #0a0a0a;
+      top: 5%;
+      left: 5%;
+    }
+
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    #countdown {
+      font-size: 24px;
+      font-weight: 700;
+      color: #00ffd5;
+      margin-top: 20px;
+    }
+
+    /* Main Content Styles */
+    #main-content {
+      display: none;
+    }
+
+    /* Header Styles */
+    header {
+      background: rgba(18, 18, 18, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 15px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(0, 255, 213, 0.2);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(45deg, #00a2ff, #00ffd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hamburger {
+      font-size: 24px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Navigation */
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 30px;
+    }
+
+    nav ul li a {
+      color: #aaa;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav ul li a:hover {
+      color: #00ffd5;
+    }
+
+    nav ul li a.active {
+      color: #00ffd5;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 5% 50px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .welcome-message {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: linear-gradient(45deg, #00a2ff, #00ffd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #ccc;
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+
+    .highlight {
+      color: #00ffd5;
+      font-weight: 600;
+    }
+
+    /* Balance Section */
+    .balance-section {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 30px auto;
+      max-width: 500px;
+      text-align: center;
+      border: 1px solid rgba(0, 255, 213, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 213, 0.1);
+    }
+
+    .balance-title {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #00ffd5;
+    }
+
+    .balance-amount {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #00a2ff, #00ffd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dashboard-btn {
+      background: linear-gradient(45deg, #ff3b3b, #ff00aa);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 59, 59, 0.3);
+    }
+
+    .dashboard-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 59, 59, 0.5);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 50px 5%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 40px;
+      color: #00ffd5;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(45deg, #00a2ff, #00ffd5);
+      margin: 10px auto;
+      border-radius: 2px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(0, 255, 213, 0.2);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(0, 255, 213, 0.2);
+      border-color: rgba(0, 255, 213, 0.5);
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #00a2ff, #00ffd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .feature-title {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
+    .feature-desc {
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    /* Footer Navigation */
+    .footer-nav {
+      background: rgba(18, 18, 18, 0.95);
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-around;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-top: 1px solid rgba(0, 255, 213, 0.2);
+      z-index: 1000;
+    }
+
+    .footer-nav a {
+      color: #aaa;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 12px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-nav a:hover,
+    .footer-nav a.active {
+      color: #00ffd5;
+    }
+
+    .footer-nav i {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+
+      nav ul {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: rgba(18, 18, 18, 0.95);
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        border-bottom: 1px solid rgba(0, 255, 213, 0.2);
+      }
+
+      nav ul.show {
+        display: flex;
+      }
+
+      .hero {
+        padding: 60px 5% 30px;
+      }
+
+      .welcome-message {
+        font-size: 24px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .features {
+        padding: 30px 5%;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Hamburger Menu Animation */
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .hamburger span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: #00ffd5;
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-circle"></div>
+    <div id="countdown">Authenticating... 5</div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <!-- Header -->
+    <header>
+      <div class="logo">Blackonstar AI</div>
+      <div class="hamburger" id="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <nav>
+        <ul id="nav-menu">
+          <li><a href="chat.html"><i class="fas fa-robot"></i> Chat AI</a></li>
+          <li><a href="referral.html"><i class="fas fa-gift"></i> Referral</a></li>
+          <li><a href="code.html"><i class="fas fa-code"></i> Learn Code</a></li>
+          <li><a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="welcome-message" id="welcome-message">Welcome to Blackonstar AI</h1>
+      <p>Here you can chat with AI, earn <span class="highlight">0.001 BK tokens</span> per chat, and exchange tokens for <span class="highlight">USDT currency 💲</span>.</p>
+      <p>Refer friends and earn <span class="highlight">50 BK tokens per referral</span>! More exciting features are coming soon! 😱</p>
+      <p>You can learn <span class="highlight">coding, ethical hacking, and cybersecurity</span> for free while earning tokens. 😁</p>
+    </section>
+
+    <!-- Balance Section -->
+    <section class="balance-section">
+      <h2 class="balance-title">Your Token Balance</h2>
+      <div class="balance-amount" id="balance-amount">0 BK</div>
+      <button class="dashboard-btn" id="dashboard-button">
+        <i class="fas fa-chart-line"></i> Check Dashboard
+      </button>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <h2 class="section-title">How It Works</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-comments"></i>
+          </div>
+          <h3 class="feature-title">Chat with AI</h3>
+          <p class="feature-desc">Engage with our advanced AI assistant and earn 0.001 BK tokens for every message.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h3 class="feature-title">Exchange Tokens</h3>
+          <p class="feature-desc">Convert your BK tokens to USDT cryptocurrency and withdraw your earnings.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="feature-title">Refer & Earn</h3>
+          <p class="feature-desc">Share your referral code and earn 50 BK tokens for every successful referral.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h3 class="feature-title">Learn & Earn</h3>
+          <p class="feature-desc">Study coding, cybersecurity, and ethical hacking for free while earning tokens.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Navigation -->
+    <div class="footer-nav">
+      <a href="home.html" class="active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="chat.html">
+        <i class="fas fa-robot"></i>
+        <span>Chat AI</span>
+      </a>
+      <a href="referral.html">
+        <i class="fas fa-gift"></i>
+        <span>Referral</span>
+      </a>
+      <a href="dashboard.html">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const SUPABASE_URL = 'https://nnixqnoxlhdncoppukvw.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uaXhxbm94bGhkbmNvcHB1a3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MzMyNjIsImV4cCI6MjA3NjQwOTI2Mn0.F2vIAkiX29Bqe7jpJhYPRzjUNJ3n0Fs3Emca-8I9JuE'
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    
+    // DOM Elements
+    const loadingScreen = document.getElementById('loading-screen')
+    const mainContent = document.getElementById('main-content')
+    const countdownElement = document.getElementById('countdown')
+    const welcomeMessage = document.getElementById('welcome-message')
+    const balanceAmount = document.getElementById('balance-amount')
+    const dashboardButton = document.getElementById('dashboard-button')
+    const hamburgerMenu = document.getElementById('hamburger-menu')
+    const navMenu = document.getElementById('nav-menu')
+    
+    // Countdown Authentication Check
+    let countdown = 5
+    const countdownInterval = setInterval(() => {
+      countdownElement.textContent = `Authenticating... ${countdown}`
+      countdown--
+      
+      if (countdown < 0) {
+        clearInterval(countdownInterval)
+        checkAuthentication()
+      }
+    }, 1000)
+    
+    // Check user authentication
+    async function checkAuthentication() {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser()
+        
+        if (error || !user) {
+          // Redirect to signup if not authenticated
+          window.location.href = 'signup.html'
+          return
+        }
+        
+        // Fetch user data
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('display_name, bk_tokens')
+          .eq('id', user.id)
+          .single()
+        
+        if (userError) {
+          console.error('Error fetching user data:', userError)
+        }
+        
+        // Update welcome message
+        const displayName = userData?.display_name || user.email.split('@')[0]
+        welcomeMessage.textContent = `Welcome, ${displayName}!`
+        
+        // Update balance
+        const tokens = userData?.bk_tokens || 0
+        balanceAmount.textContent = `${tokens} BK`
+        
+        // Show main content
+        loadingScreen.style.display = 'none'
+        mainContent.style.display = 'block'
+        
+      } catch (err) {
+        console.error('Authentication error:', err)
+        window.location.href = 'signup.html'
+      }
+    }
+    
+    // Dashboard button handler
+    dashboardButton.addEventListener('click', () => {
+      window.location.href = 'dashboard.html'
+    })
+    
+    // Hamburger menu toggle
+    hamburgerMenu.addEventListener('click', () => {
+      hamburgerMenu.classList.toggle('active')
+      navMenu.classList.toggle('show')
+    })
+    
+    // Close menu when clicking a link
+    document.querySelectorAll('#nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburgerMenu.classList.remove('active')
+        navMenu.classList.remove('show')
+      })
+    })
+  </script>
+</body>
+</html>
