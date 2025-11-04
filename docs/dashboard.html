@@ -305,13 +305,13 @@ const { data: referrerData, error: referrerError } = await supabase
         const newTokens = (referrer.bk_tokens || 0) + 50
         const newReferralCount = (referrer.referral_count || 0) + 1
         
-        const { error: referrerUpdateError } = await supabase
-          .from('users')
-          .update({
-            bk_tokens: newTokens,
-            referral_count: newReferralCount
-          })
-          .eq('id', referrer.id)
+        // Use this:
+const { error: referrerUpdateError } = await supabase
+  .rpc('reward_referrer', {
+    referrer_id: referrer.id,
+    tokens_to_add: 50,
+    count_to_add: 1
+  })
         
         if (referrerUpdateError) {
           console.warn('Failed to reward referrer:', referrerUpdateError.message)
