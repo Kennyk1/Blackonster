@@ -261,12 +261,9 @@
       showMessage('Verifying code...', 'success')
       
       try {
-        // Check if referral code exists by looking for referral_code in database
-        const { data: referrerData, error: referrerError } = await supabase
-          .from('users')
-          .select('id, bk_tokens, referral_count')
-          .eq('referral_code', code)
-          .limit(1)
+        // Use this:
+const { data: referrerData, error: referrerError } = await supabase
+  .rpc('check_referral_code', { input_code: code })
         
         if (referrerError) {
           throw new Error('Error checking referral code: ' + referrerError.message)
