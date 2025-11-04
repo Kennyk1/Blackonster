@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blackonstar AI — Signup & Login</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      user-select: none;
+    }
+
+    .container {
+      background: #121212;
+      padding: 40px 35px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 255, 213, 0.3);
+      width: 100%;
+      max-width: 440px;
+      user-select: text;
+    }
+
+    h2 {
+      color: #00ffd5;
+      font-weight: 700;
+      font-size: 28px;
+      margin-bottom: 25px;
+      text-align: center;
+      letter-spacing: 1.2px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #00ffd5;
+    }
+
+    input {
+      background: #1f1f1f;
+      border: 1.5px solid #333;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 16px;
+      color: #eee;
+      margin-bottom: 20px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #00ffd5;
+      box-shadow: 0 0 8px #00ffd5;
+    }
+
+    input::placeholder {
+      color: #666;
+    }
+
+    .optional-label {
+      font-weight: 400;
+      font-size: 12px;
+      color: #888;
+      font-style: italic;
+      margin-left: 6px;
+      user-select: none;
+    }
+
+    button {
+      background: #ff3b3b;
+      color: #fff;
+      border: none;
+      padding: 16px 0;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 6px 15px rgba(255, 59, 59, 0.5);
+      margin-top: 5px;
+    }
+
+    button:hover:not(:disabled) {
+      background: #e03131;
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(224, 49, 49, 0.7);
+    }
+
+    button:disabled {
+      background: #6b6b6b;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    #message {
+      margin-top: 18px;
+      font-weight: 600;
+      font-size: 15px;
+      min-height: 24px;
+      text-align: center;
+      user-select: text;
+      color: #ff6b6b;
+    }
+
+    #message.success {
+      color: #69f0ae;
+    }
+
+    .toggle-text {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+      user-select: none;
+    }
+
+    .toggle-link {
+      color: #00ffd5;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      margin-left: 6px;
+      transition: color 0.3s ease;
+      user-select: text;
+    }
+
+    .toggle-link:hover {
+      color: #ff3b3b;
+    }
+
+    /* Referral Button Style */
+    #apply-referral-btn {
+      background: transparent;
+      color: #00ffd5;
+      border: 1px solid #00ffd5;
+      box-shadow: none;
+      font-size: 14px;
+      padding: 10px 0;
+      margin-top: -10px;
+      margin-bottom: 15px;
+    }
+
+    #apply-referral-btn:hover:not(:disabled) {
+      background: rgba(0, 255, 213, 0.1);
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Referral Popup Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #121212;
+      padding: 30px 25px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 255, 213, 0.3);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .close-modal:hover {
+      color: #fff;
+    }
+
+    .referral-icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+
+    .modal h3 {
+      color: #00ffd5;
+      margin-bottom: 15px;
+    }
+
+    .modal p {
+      color: #aaa;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .highlight {
+      color: #00ffd5;
+      font-weight: 600;
+    }
+
+    .modal input {
+      margin-bottom: 15px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      margin: 0;
+    }
+
+    #skip-referral-btn {
+      background: transparent;
+      color: #888;
+      border: 1px solid #333;
+      box-shadow: none;
+    }
+
+    #skip-referral-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-message {
+      margin-top: 15px;
+      font-weight: 600;
+      min-height: 22px;
+    }
+
+    .modal-message.success {
+      color: #69f0ae;
+    }
+
+    .modal-message.error {
+      color: #ff6b6b;
+    }
+
+    /* Hide forms by default */
+    form > .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Authentication form">
+    <h2 id="form-title">Create Your Account</h2>
+
+    <!-- Signup Form -->
+    <form id="signup-form" novalidate>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Your full name" autocomplete="name" required />
+
+      <label for="email-signup">Email Address</label>
+      <input type="email" id="email-signup" name="email-signup" placeholder="you@example.com" autocomplete="email" required />
+
+      <label for="password-signup">Password</label>
+      <input type="password" id="password-signup" name="password-signup" placeholder="Enter password" autocomplete="new-password" minlength="6" required />
+
+      <label for="confirm-password">Confirm Password</label>
+      <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter password" autocomplete="new-password" minlength="6" required />
+
+      <button type="button" id="apply-referral-btn">Apply for Referral Rewards</button>
+
+      <button type="submit" id="signup-btn">Sign Up</button>
+    </form>
+
+    <!-- Login Form -->
+    <form id="login-form" novalidate style="display:none;">
+      <label for="email-login">Email Address</label>
+      <input type="email" id="email-login" name="email-login" placeholder="you@example.com" autocomplete="email" required />
+
+      <label for="password-login">Password</label>
+      <input type="password" id="password-login" name="password-login" placeholder="Enter password" autocomplete="current-password" required />
+
+      <button type="submit" id="login-btn">Log In</button>
+    </form>
+
+    <p id="message" role="alert" aria-live="polite"></p>
+
+    <p class="toggle-text" id="toggle-text">
+      Already have an account?
+      <a href="#" id="toggle-link" class="toggle-link" tabindex="0">Log In</a>
+    </p>
+  </div>
+
+  <!-- Referral Popup Modal -->
+  <div id="referral-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="referral-icon">🎁</div>
+      <h3>Referral Rewards</h3>
+      
+      <p>Enter a referral code to get <span class="highlight">10 BK tokens</span>!<br/>
+      Your referrer will get <span class="highlight">50 BK tokens</span> too.</p>
+
+      <input type="text" id="referral-code-input" placeholder="Enter referral code (e.g. ABC123DE)" autocomplete="off" />
+
+      <div class="modal-buttons">
+        <button id="apply-referral-code-btn">Apply Code</button>
+        <button id="skip-referral-btn">Skip</button>
+      </div>
+
+      <p id="referral-message" class="modal-message" role="alert" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const SUPABASE_URL = 'https://nnixqnoxlhdncoppukvw.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uaXhxbm94bGhkbmNvcHB1a3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MzMyNjIsImV4cCI6MjA3NjQwOTI2Mn0.F2vIAkiX29Bqe7jpJhYPRzjUNJ3n0Fs3Emca-8I9JuE'
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+    const signupForm = document.getElementById('signup-form')
+    const loginForm = document.getElementById('login-form')
+    const message = document.getElementById('message')
+    const formTitle = document.getElementById('form-title')
+    const toggleText = document.getElementById('toggle-text')
+    const toggleLink = document.getElementById('toggle-link')
+
+    const signupBtn = document.getElementById('signup-btn')
+    const loginBtn = document.getElementById('login-btn')
+    
+    // Referral popup elements
+    const referralModal = document.getElementById('referral-modal')
+    const applyReferralBtn = document.getElementById('apply-referral-btn')
+    const closeModal = document.querySelector('.close-modal')
+    const referralCodeInput = document.getElementById('referral-code-input')
+    const applyReferralCodeBtn = document.getElementById('apply-referral-code-btn')
+    const skipReferralBtn = document.getElementById('skip-referral-btn')
+    const referralMessage = document.getElementById('referral-message')
+    
+    // Store referral code during signup
+    let referralCodeToApply = null
+
+    // Toggle between signup and login views
+    function toggleForms() {
+      if (signupForm.style.display === 'none') {
+        // Show signup form
+        signupForm.style.display = 'flex'
+        loginForm.style.display = 'none'
+        formTitle.textContent = 'Create Your Account'
+        toggleText.innerHTML = `Already have an account? <a href="#" id="toggle-link" class="toggle-link" tabindex="0">Log In</a>`
+        message.textContent = ''
+        message.classList.remove('success')
+      } else {
+        // Show login form
+        signupForm.style.display = 'none'
+        loginForm.style.display = 'flex'
+        formTitle.textContent = 'Welcome Back'
+        toggleText.innerHTML = `Don't have an account? <a href="#" id="toggle-link" class="toggle-link" tabindex="0">Sign Up</a>`
+        message.textContent = ''
+        message.classList.remove('success')
+      }
+      // Re-attach event listener for new toggle link
+      document.getElementById('toggle-link').addEventListener('click', (e) => {
+        e.preventDefault()
+        toggleForms()
+      })
+    }
+
+    // Initial attach toggle listener
+    toggleLink.addEventListener('click', (e) => {
+      e.preventDefault()
+      toggleForms()
+    })
+
+    // Utility to generate unique referral code (8 chars alphanumeric)
+    function generateReferralCode(length = 8) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      let code = ''
+      for (let i = 0; i < length; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length))
+      }
+      return code
+    }
+
+    // Open referral popup
+    applyReferralBtn.addEventListener('click', () => {
+      referralModal.style.display = 'flex'
+      referralCodeInput.focus()
+      referralMessage.textContent = ''
+      referralMessage.className = 'modal-message'
+    })
+
+    // Close referral popup
+    closeModal.addEventListener('click', () => {
+      referralModal.style.display = 'none'
+    })
+
+    skipReferralBtn.addEventListener('click', () => {
+      referralModal.style.display = 'none'
+    })
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === referralModal) {
+        referralModal.style.display = 'none'
+      }
+    })
+
+    // Apply referral code from popup
+    applyReferralCodeBtn.addEventListener('click', async () => {
+      const code = referralCodeInput.value.trim().toUpperCase()
+      
+      if (!code) {
+        referralMessage.textContent = 'Please enter a referral code'
+        referralMessage.className = 'modal-message error'
+        return
+      }
+      
+      if (code.length !== 8) {
+        referralMessage.textContent = 'Referral codes are 8 characters long'
+        referralMessage.className = 'modal-message error'
+        return
+      }
+      
+      // Disable buttons during processing
+      applyReferralCodeBtn.disabled = true
+      skipReferralBtn.disabled = true
+      referralMessage.textContent = 'Verifying code...'
+      referralMessage.className = 'modal-message success'
+      
+      try {
+        // Check if referral code exists using our secure function
+        const { data: referrerData, error: referrerError } = await supabase
+          .rpc('check_referral_code', { input_code: code })
+        
+        if (referrerError) {
+          throw new Error('Error checking referral code: ' + referrerError.message)
+        }
+        
+        // Check if any results returned
+        if (!referrerData || referrerData.length === 0) {
+          referralMessage.textContent = 'Invalid referral code. Please try again.'
+          referralMessage.className = 'modal-message error'
+          applyReferralCodeBtn.disabled = false
+          skipReferralBtn.disabled = false
+          referralCodeInput.focus()
+          return
+        }
+        
+        const referrer = referrerData[0]
+        
+        // Get current user (this will be used during signup)
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        
+        // Check if user is trying to refer themselves (will work during actual signup)
+        if (currentUser && referrer.id === currentUser.id) {
+          referralMessage.textContent = 'You cannot use your own referral code!'
+          referralMessage.className = 'modal-message error'
+          applyReferralCodeBtn.disabled = false
+          skipReferralBtn.disabled = false
+          return
+        }
+        
+        // Store the referral code to apply during signup
+        referralCodeToApply = code
+        
+        // Success!
+        referralMessage.textContent = '🎉 Referral code validated! You\'ll get 10 BK tokens after signup.'
+        referralMessage.className = 'modal-message success'
+        
+        // Close modal after delay
+        setTimeout(() => {
+          referralModal.style.display = 'none'
+          applyReferralBtn.textContent = '_rewards applied_'
+          applyReferralBtn.disabled = true
+        }, 2000)
+        
+      } catch (err) {
+        console.error('Error applying referral code:', err)
+        referralMessage.textContent = 'Error: ' + err.message
+        referralMessage.className = 'modal-message error'
+        applyReferralCodeBtn.disabled = false
+        skipReferralBtn.disabled = false
+      }
+    })
+
+    // Handle Enter key in referral code input
+    referralCodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        applyReferralCodeBtn.click()
+      }
+    })
+
+    // Signup form submit handler
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      message.textContent = ''
+      signupBtn.disabled = true
+
+      const name = signupForm['name'].value.trim()
+      const email = signupForm['email-signup'].value.trim()
+      const password = signupForm['password-signup'].value
+      const confirmPassword = signupForm['confirm-password'].value
+
+      // Validation
+      if (password !== confirmPassword) {
+        message.textContent = '⚠️ Passwords do not match.'
+        signupBtn.disabled = false
+        return
+      }
+      if (password.length < 6) {
+        message.textContent = '⚠️ Password must be at least 6 characters.'
+        signupBtn.disabled = false
+        return
+      }
+
+      message.textContent = 'Signing up...'
+
+      try {
+        // Sign up with Supabase Auth
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { display_name: name }
+          }
+        })
+
+        if (error) {
+          message.textContent = 'Error: ' + error.message
+          signupBtn.disabled = false
+          return
+        }
+
+        if (!data?.user?.id) {
+          message.textContent = 'Error: User ID not returned.'
+          signupBtn.disabled = false
+          return
+        }
+
+        const userId = data.user.id
+        const referralCode = generateReferralCode()
+
+        // Insert new user record with referral_code and initial tokens
+        const { error: upsertError } = await supabase
+          .from('users')
+          .upsert({
+            id: userId,
+            email,
+            display_name: name,
+            referral_code: referralCode,
+            invitation_code: referralCodeToApply || null,
+            bk_tokens: referralCodeToApply ? 10 : 0,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'id' })
+
+        if (upsertError) {
+          message.textContent = 'Signup succeeded but failed to save user data: ' + upsertError.message
+          signupBtn.disabled = false
+          return
+        }
+
+        // Reward referrer with 50 BK tokens if valid referral code used
+        if (referralCodeToApply) {
+          try {
+            // Find the referrer using our secure function
+            const { data: referrerData, error: referrerError } = await supabase
+              .rpc('check_referral_code', { input_code: referralCodeToApply })
+            
+            if (!referrerError && referrerData && referrerData.length > 0) {
+              const referrer = referrerData[0]
+              
+              // Reward referrer using our secure function
+              const { error: rewardError } = await supabase
+                .rpc('reward_referrer', {
+                  referrer_id: referrer.id,
+                  tokens_to_add: 50,
+                  count_to_add: 1
+                })
+              
+              if (rewardError) {
+                console.warn('Failed to reward referrer:', rewardError.message)
+              }
+            }
+          } catch (rewardErr) {
+            console.warn('Error rewarding referrer:', rewardErr.message)
+          }
+        }
+
+        message.textContent = '✅ Sign up successful! Please log in.'
+        message.classList.add('success')
+
+        // Clear signup form
+        signupForm.reset()
+        referralCodeToApply = null
+        applyReferralBtn.textContent = 'Apply for Referral Rewards'
+        applyReferralBtn.disabled = false
+
+        // Switch to login form after short delay
+        setTimeout(() => {
+          toggleForms()
+        }, 1800)
+      } catch (err) {
+        message.textContent = 'Error: ' + err.message
+        signupBtn.disabled = false
+      }
+    })
+
+    // Login form submit handler
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      message.textContent = ''
+      loginBtn.disabled = true
+
+      const email = loginForm['email-login'].value.trim()
+      const password = loginForm['password-login'].value
+
+      if (!email || !password) {
+        message.textContent = '⚠️ Please enter email and password.'
+        loginBtn.disabled = false
+        return
+      }
+
+      message.textContent = 'Logging in...'
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+
+        if (error) {
+          message.textContent = 'Error: ' + error.message
+          loginBtn.disabled = false
+          return
+        }
+
+        message.textContent = '✅ Login successful! Redirecting...'
+        message.classList.add('success')
+
+        // Redirect to home.html after login
+        setTimeout(() => {
+          window.location.href = 'home.html' // Changed from dashboard.html to home.html
+        }, 1500)
+      } catch (err) {
+        message.textContent = 'Error: ' + err.message
+        loginBtn.disabled = false
+      }
+    })
+  </script>
+</body>
+</html>
