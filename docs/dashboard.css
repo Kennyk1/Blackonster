@@ -1,0 +1,203 @@
+/* Dashboard CSS */
+:root {
+    --primary: #00a2ff;
+    --primary-dark: #0080cc;
+    --secondary: #00ffd5;
+    --success: #0ecb81;
+    --danger: #f6465d;
+    --warning: #f0b90b;
+    --dark-bg: #0f1720;
+    --darker-bg: #0a111a;
+    --card-bg: #171f2c;
+    --text-primary: #e0e3eb;
+    --text-secondary: #9aa4b2;
+    --border-color: #2a3646;
+    --hover-bg: #1d2838;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header Styles */
+.dashboard-header {
+    background-color: var(--darker-bg);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo h1 {
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    color: var(--text-secondary);
+}
+
+.avatar i {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+/* Main Dashboard */
+.dashboard-main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Balance Section */
+.balance-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.spot-value h3, .pnl-section h3 {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.value-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.btc-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.usd-value {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.pnl-value {
+    display: flex;
+    flex-direction: column;
+}
+
+.pnl-value .amount {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--success);
+    margin-bottom: 0.25rem;
+}
+
+.pnl-value .percentage {
+    font-size: 0.9rem;
+    color: var(--success);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.add-funds {
+    background: var(--primary);
+    color: white;
+}
+
+.add-funds:hover {
+    background: var(--primary-dark);
+}
+
+.withdraw {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.withdraw:hover {
+    background: var(--hover-bg);
+}
+
+/* Wallet Section */
+.wallet-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.wallet-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.wallet-card:hover {
+    transform: translateY(-5px);
+}
+
+.spot-wallet {
+    border-top: 3px solid var(--primary);
+}
+
+.futures-wallet {
+    border-top: 3px solid var(--warning);
+}
+
+.wallet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.wallet-header h3 {
