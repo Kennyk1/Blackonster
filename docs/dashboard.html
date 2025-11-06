@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blackonstar AI - Dashboard</title>
+
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Minimal responsive CSS (embedded so this file is standalone) -->
+    <style>
+        :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --muted: #9aa4b2;
+            --accent: #ffdd57;
+            --accent-2: #5de0a0;
+            --danger: #ff5a5f;
+            --glass: rgba(255,255,255,0.03);
+        }
+        html,body{
+            margin:0;
+            padding:0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg, #061226 0%, #071528 100%);
+            color:#dbe7f0;
+            min-height:100vh;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+        .dashboard-container{
+            max-width:1100px;
+            margin:0 auto;
+            padding:16px;
+            display:flex;
+            flex-direction:column;
+            min-height:100vh;
+            gap:12px;
+        }
+
+        /* Header */
+        .dashboard-header{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            padding:10px 14px;
+            background:var(--glass);
+            border-radius:12px;
+            box-shadow: 0 6px 20px rgba(2,6,23,0.6);
+            backdrop-filter: blur(6px);
+        }
+        .logo h1{
+            margin:0;
+            font-size:18px;
+            letter-spacing:0.4px;
+        }
+        .header-actions{
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .user-info{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .avatar{
+            width:38px;
+            height:38px;
+            border-radius:50%;
+            background:linear-gradient(90deg,#264653,#2a9d8f);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:700;
+            color:#fff;
+        }
+        .btn{
+            background:transparent;
+            color:inherit;
+            border:1px solid rgba(255,255,255,0.06);
+            padding:8px 12px;
+            border-radius:10px;
+            cursor:pointer;
+            font-size:14px;
+        }
+        .btn:disabled{opacity:0.6;cursor:not-allowed;}
+
+        /* Main */
+        .dashboard-main{
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+            flex:1 1 auto;
+        }
+
+        /* Balance section */
+        .balance-section{
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            padding:12px;
+            background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-radius:12px;
+        }
+        .value-display{
+            display:flex;
+            gap:12px;
+            align-items:baseline;
+            flex-wrap:wrap;
+        }
+        .btc-value{font-size:20px;font-weight:700;}
+        .usd-value{color:var(--muted);}
+
+        .action-buttons{
+            display:flex;
+            gap:8px;
+            margin-top:8px;
+        }
+        .btn.exchange{background:linear-gradient(90deg,#334155,#0ea5a9);border:0;color:#071122;}
+        .btn.withdraw{background:linear-gradient(90deg,#ef4444,#fb7185);border:0;color:#fff;}
+
+        /* Wallet cards */
+        .wallet-section{
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:12px;
+        }
+        .wallet-card{
+            padding:12px;
+            border-radius:10px;
+            background:var(--card);
+            box-shadow:0 6px 18px rgba(2,6,23,0.6);
+        }
+        .wallet-header{display:flex;justify-content:space-between;align-items:center;}
+        .wallet-balance{margin-top:8px;font-weight:600;}
+        .wallet-actions{margin-top:10px;}
+
+        /* Transfer section */
+        .transfer-section{
+            padding:12px;
+            border-radius:12px;
+            background:var(--glass);
+        }
+        .transfer-container{display:flex;flex-direction:column;gap:10px;}
+        .transfer-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+        .transfer-column{flex:1 1 200px;min-width:160px;}
+        label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+        select,input{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;}
+        .amount-input{display:flex;gap:8px;}
+        .amount-input input{flex:1;}
+        .max-btn{min-width:72px;}
+
+        /* Activities */
+        .activities-section{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:12px;
+        }
+        .activity-card{
+            padding:12px;border-radius:10px;background:var(--card);
+        }
+        .activity-card h3{margin:0 0 6px 0;}
+        .claim-btn,.spin-btn{display:inline-block;margin-top:8px;}
+
+        /* Footer */
+        footer.dashboard-footer{
+            margin-top:auto;
+            padding:12px;border-radius:10px;background:transparent;color:var(--muted);font-size:13px;
+            display:flex;flex-direction:column;gap:8px;
+        }
+
+        /* Modals */
+        .modal{
+            display:none;
+            position:fixed;left:0;top:0;width:100%;height:100%;
+            background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:1200;padding:18px;
+        }
+        .modal-content{
+            width:100%;max-width:520px;background:#071426;padding:18px;border-radius:12px;box-shadow:0 12px 40px rgba(2,6,23,0.7);
+            color:inherit;position:relative;
+            max-height:92vh;overflow:auto;
+        }
+        .close-modal{position:absolute;right:12px;top:10px;font-size:20px;cursor:pointer;}
+        .form-group{margin-bottom:12px;}
+        .form-hint{font-size:12px;color:var(--muted);margin-top:6px;}
+
+        /* Notification */
+        .notification{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;padding:12px 18px;border-radius:10px;background:#0b1220;color:#dff3e6;display:none;z-index:1300;}
+        .notification.error{background:#3e0f12;color:#ffdede;}
+
+        /* Responsive */
+        @media (max-width:900px){
+            .wallet-section{grid-template-columns:1fr;}
+            .activities-section{grid-template-columns:1fr;}
+            .dashboard-header{flex-direction:column;align-items:flex-start;gap:8px;}
+            .header-actions{width:100%;display:flex;justify-content:space-between;}
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="logo">
+                    <h1>Blackonstar AI</h1>
+                </div>
+                <div>
+                    <button class="btn" id="history-btn"><i class="fas fa-history"></i> History</button>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="user-info">
+                    <span class="username">Welcome, <strong id="user-display-name">Loading...</strong></span>
+                    <div class="avatar" id="user-avatar">U</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="btn" id="manage-address-btn"><i class="fas fa-map-marker-alt"></i> Address</button>
+                    <button class="btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <main class="dashboard-main">
+            <!-- Balance -->
+            <section class="balance-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <div>
+                        <h3 style="margin:0">Spot Value (est.)</h3>
+                        <div class="value-display">
+                            <span class="btc-value" id="total-bk-tokens">0 BK</span>
+                            <span class="usd-value">≈ $<span id="usd-equivalent">0.00</span> USD</span>
+                        </div>
+                    </div>
+
+                    <div style="text-align:right;">
+                        <h4 style="margin:0">Futures Wallet (USDT)</h4>
+                        <div style="font-weight:600"><span id="futures-usdt-balance">0.0000</span> USDT</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn exchange" id="exchange-btn"><i class="fas fa-exchange-alt"></i> Exchange</button>
+                    <button class="btn withdraw" id="withdraw-btn"><i class="fas fa-minus-circle"></i> Withdraw</button>
+                </div>
+            </section>
+
+            <!-- Wallet cards -->
+            <section class="wallet-section">
+                <div class="wallet-card spot-wallet">
+                    <div class="wallet-header">
+                        <h3>Spot Wallet</h3>
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="wallet-balance">
+                        <span class="amount" id="spot-balance">0.00 BK</span>
+                        <div class="equivalent" style="color:var(--muted)">≈ $<span id="spot-usd">0.00</span> USD</div>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="btn" id="transfer-to-futures" data-from="spot" data-to="futures">Transfer → Futures</button>
+                    </div>
+                </div>
+
+                <div class="wallet-card futures-wallet">
+                    <div class="wallet-header">
+                        <h3>USDT-M Futures</h3>
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="wallet-balance">
+                        <span class="amount" id="futures-balance">0.00 USDT</span>
+                        <div class="equivalent" style="color:var(--muted)">≈ $<span id="futures-usd">0.00</span> USD</div>
+                    </div>
+                    <div class="wallet-actions">
+                        <button class="btn" id="transfer-to-spot" data-from="futures" data-to="spot">Transfer → Spot</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transfer -->
+            <section class="transfer-section">
+                <h2 class="section-title">Transfer Tokens</h2>
+                <div class="transfer-container">
+                    <div class="transfer-form">
+                        <div class="transfer-row">
+                            <div class="transfer-column">
+                                <label>From</label>
+                                <div class="wallet-selector">
+                                    <select id="transfer-from">
+                                        <option value="spot">Spot (BK)</option>
+                                        <option value="futures">USDT-M Futures (USDT)</option>
+                                    </select>
+                                    <div style="font-size:12px;color:var(--muted);margin-top:6px">Available: <span id="from-available">0.00</span> <span id="from-token">BK</span></div>
+                                </div>
+                            </div>
+
+                            <div class="transfer-column">
+                                <label>To</label>
+                                <div class="wallet-selector">
+                                    <select id="transfer-to">
+                                        <option value="futures">USDT-M Futures (USDT)</option>
+                                        <option value="spot">Spot (BK)</option>
+                                    </select>
+                                    <div style="font-size:12px;color:var(--muted);margin-top:6px">Available: <span id="to-available">0.00</span> <span id="to-token">USDT</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="transfer-row coin-row">
+                            <label style="width:100%">Coin</label>
+                            <div class="coin-display" style="display:flex;gap:8px;align-items:center;">
+                                <div style="font-weight:600" id="transfer-token-name">BK Token</div>
+                            </div>
+                        </div>
+
+                        <div class="transfer-row amount-row">
+                            <label style="width:100%">Transfer Amount</label>
+                            <div class="amount-input" style="width:100%">
+                                <input type="number" id="transfer-amount" placeholder="Enter amount" step="0.01" min="0" />
+                                <button class="btn max-btn" id="max-transfer">Max</button>
+                            </div>
+                            <div style="font-size:12px;color:var(--muted)">Available: <span id="max-available-amount">0.00</span> <span id="max-token">BK</span></div>
+                        </div>
+
+                        <div style="margin-top:10px;">
+                            <button class="btn" id="submit-transfer">Transfer</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activities -->
+            <section class="activities-section">
+                <div class="activity-card checkin-card">
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <h3>Daily Check-in</h3>
+                            <p style="color:var(--muted);margin:4px 0 8px 0">Claim your daily rewards</p>
+                            <button class="btn claim-btn" id="checkin-btn">Claim Now</button>
+                            <div class="checkin-status" id="checkin-status" style="margin-top:8px;color:var(--muted);font-size:13px">Last checked in: Never</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card spin-card">
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <i class="fas fa-spinner"></i>
+                        <div>
+                            <h3>Spin to Win</h3>
+                            <p style="color:var(--muted);margin:4px 0 8px 0">Try your luck to win prizes</p>
+                            <button class="btn spin-btn" id="spin-btn">Spin Now (1 BK)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card exchange-card">
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <i class="fas fa-exchange-alt"></i>
+                        <div>
+                            <h3>Exchange</h3>
+                            <p style="color:var(--muted);margin:4px 0 8px 0">Convert your tokens (Min 1000 BK)</p>
+                            <button class="btn" id="quick-exchange-btn">Exchange</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Withdraw Modal -->
+        <div class="modal" id="withdraw-modal">
+            <div class="modal-content">
+                <span class="close-modal" id="close-withdraw-modal">&times;</span>
+                <h2 class="modal-title">Withdraw Funds</h2>
+                <form id="withdraw-form">
+                    <div class="form-group">
+                        <label for="wallet-address">BSC Wallet Address</label>
+                        <input type="text" id="wallet-address" class="form-control" placeholder="Enter your BSC wallet address">
+                        <div style="font-size:12px;color:var(--muted);margin-top:6px">You can save an address to reuse for future withdrawals. Not required to view dashboard or exchange tokens.</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" class="form-control" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="withdraw-amount">Amount (USDT)</label>
+                        <input type="number" id="withdraw-amount" class="form-control" placeholder="Enter amount" step="0.0001" min="1">
+                        <div class="form-hint">Minimum withdrawal: 1 USDT ($1.00 USD)</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button type="submit" class="btn submit-btn">Process Withdrawal</button>
+                        <button type="button" class="btn" id="open-manage-address-from-withdraw">Manage Address</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Manage Address Modal -->
+        <div class="modal" id="manage-address-modal">
+            <div class="modal-content">
+                <span class="close-modal" id="close-manage-address">&times;</span>
+                <h2 class="modal-title">Manage Withdrawal Address</h2>
+                <form id="manage-address-form">
+                    <div class="form-group">
+                        <label for="manage-wallet-address">BSC Wallet Address</label>
+                        <input type="text" id="manage-wallet-address" class="form-control" placeholder="Enter BSC wallet address (optional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="manage-full-name">Full Name</label>
+                        <input type="text" id="manage-full-name" class="form-control" placeholder="Full name (optional)">
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn" id="save-address-btn" type="submit">Save Address</button>
+                        <button class="btn" id="remove-address-btn" type="button">Remove Address</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Exchange Modal -->
+        <div class="modal" id="exchange-modal">
+            <div class="modal-content">
+                <span class="close-modal" id="close-exchange-modal">&times;</span>
+                <h2 class="modal-title">Exchange BK to USDT</h2>
+                <div class="exchange-info" style="margin-bottom:10px;">
+                    <div><strong>Exchange Rate:</strong> <span class="rate-value" id="rate-value">1000 BK = 1 USDT</span></div>
+                    <div style="color:var(--muted)"><strong>Available Balance:</strong> <span id="exchange-available-balance">0 BK</span></div>
+                </div>
+                <form id="exchange-form">
+                    <div class="form-group">
+                        <label for="exchange-amount">Amount to Exchange (BK)</label>
+                        <input type="number" id="exchange-amount" class="form-control" placeholder="Enter amount" step="1" min="1000">
+                        <div class="form-hint">You will receive <span id="exchange-estimate">0.0000</span> USDT</div>
+                    </div>
+                    <div>
+                        <button class="btn" type="submit">Exchange</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="notification" id="notification">Operation completed successfully!</div>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div style="min-width:200px">
+                    <h4 style="margin:0 0 6px 0">Quick Links</h4>
+                    <div style="color:var(--muted)">
+                        <a href="home.html" style="color:inherit;margin-right:8px">Home</a> |
+                        <a href="chat.html" style="color:inherit;margin-left:8px">Chat AI</a> |
+                        <a href="referral.html" style="color:inherit;margin-left:8px">Referral</a>
+                    </div>
+                </div>
+
+                <div style="min-width:200px;text-align:right;color:var(--muted)">
+                    <div>&copy; 2025 Blackonstar AI. All rights reserved.</div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Script -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        // Supabase config - unchanged from your file
+        const SUPABASE_URL = 'https://nnixqnoxlhdncoppukvw.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uaXhxbm94bGhkbmNvcHB1a3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MzMyNjIsImV4cCI6MjA3NjQwOTI2Mn0.F2vIAkiX29Bqe7jpJhYPRzjUNJ3n0Fs3Emca-8I9JuE'
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+        // DOM Elements (selected ones)
+        const userDisplayName = document.getElementById('user-display-name')
+        const userAvatar = document.getElementById('user-avatar')
+        const totalBkTokens = document.getElementById('total-bk-tokens')
+        const usdEquivalent = document.getElementById('usd-equivalent')
+        const spotBalance = document.getElementById('spot-balance')
+        const spotUsd = document.getElementById('spot-usd')
+        const futuresBalance = document.getElementById('futures-balance')
+        const futuresUsd = document.getElementById('futures-usd')
+        const futuresUsdtBalance = document.getElementById('futures-usdt-balance')
+        const fromAvailable = document.getElementById('from-available')
+        const toAvailable = document.getElementById('to-available')
+        const fromToken = document.getElementById('from-token')
+        const toToken = document.getElementById('to-token')
+        const maxAvailableAmount = document.getElementById('max-available-amount')
+        const maxToken = document.getElementById('max-token')
+        const transferTokenName = document.getElementById('transfer-token-name')
+        const transferAmount = document.getElementById('transfer-amount')
+        const transferFrom = document.getElementById('transfer-from')
+        const transferTo = document.getElementById('transfer-to')
+        const submitTransfer = document.getElementById('submit-transfer')
+        const maxTransfer = document.getElementById('max-transfer')
+        const checkinBtn = document.getElementById('checkin-btn')
+        const checkinStatus = document.getElementById('checkin-status')
+        const spinBtn = document.getElementById('spin-btn')
+        const exchangeBtn = document.getElementById('exchange-btn')
+        const quickExchangeBtn = document.getElementById('quick-exchange-btn')
+        const withdrawBtn = document.getElementById('withdraw-btn')
+        const withdrawModal = document.getElementById('withdraw-modal')
+        const exchangeModal = document.getElementById('exchange-modal')
+        const closeWithdrawModal = document.getElementById('close-withdraw-modal')
+        const closeExchangeModal = document.getElementById('close-exchange-modal')
+        const withdrawForm = document.getElementById('withdraw-form')
+        const exchangeForm = document.getElementById('exchange-form')
+        const walletAddress = document.getElementById('wallet-address')
+        const fullName = document.getElementById('full-name')
+        const withdrawAmount = document.getElementById('withdraw-amount')
+        const exchangeAmount = document.getElementById('exchange-amount')
+        const exchangeEstimate = document.getElementById('exchange-estimate')
+        const exchangeAvailableBalance = document.getElementById('exchange-available-balance')
+        const notification = document.getElementById('notification')
+        const manageAddressBtn = document.getElementById('manage-address-btn')
+        const manageAddressModal = document.getElementById('manage-address-modal')
+        const closeManageAddress = document.getElementById('close-manage-address')
+        const manageAddressForm = document.getElementById('manage-address-form')
+        const manageWalletAddress = document.getElementById('manage-wallet-address')
+        const manageFullName = document.getElementById('manage-full-name')
+        const saveAddressBtn = document.getElementById('save-address-btn')
+        const removeAddressBtn = document.getElementById('remove-address-btn')
+        const openManageAddressFromWithdraw = document.getElementById('open-manage-address-from-withdraw')
+        const logoutBtn = document.getElementById('logout-btn')
+        const historyBtn = document.getElementById('history-btn')
+
+        // Transfer quick buttons
+        const transferToFuturesBtn = document.getElementById('transfer-to-futures')
+        const transferToSpotBtn = document.getElementById('transfer-to-spot')
+
+        // State
+        let currentUser = null
+        let wallets = {}
+        let lastCheckin = null
+        let savedAddress = null
+        let exchangeRate = 0.001 // fallback; we'll try to read from DB
+
+        // Helper: show notification
+        function showNotification(message, isError = false, timeout = 3500) {
+            notification.textContent = message
+            notification.className = 'notification' + (isError ? ' error' : '')
+            notification.style.display = 'block'
+            clearTimeout(window._notifTimer)
+            window._notifTimer = setTimeout(() => notification.style.display = 'none', timeout)
+        }
+
+        // Initialize dashboard
+        async function initDashboard() {
+            try {
+                const { data: authData, error: authErr } = await supabase.auth.getUser()
+                if (authErr || !authData?.user) {
+                    // not signed in
+                    window.location.href = 'login.html'
+                    return
+                }
+                currentUser = authData.user
+
+                // UI user info
+                const displayName = currentUser.email?.split('@')[0] || (currentUser.user_metadata?.full_name || 'User')
+                userDisplayName.textContent = displayName
+                userAvatar.textContent = displayName.charAt(0).toUpperCase()
+
+                // Load core resources in parallel
+                await Promise.all([
+                    ensureDefaultWallets(),
+                    loadExchangeRate(),
+                    loadSavedAddress(),
+                    loadCheckinStatus()
+                ])
+
+                await loadWallets() // final load after wallets ensured
+                updateBalancesUI()
+                updateTransferUI()
+            } catch (err) {
+                console.error('init error', err)
+                showNotification('Failed to initialize dashboard', true)
+            }
+        }
+
+        // Ensure default wallets exist and have correct token symbols
+        async function ensureDefaultWallets() {
+            if (!currentUser) return
+            try {
+                // Get existing wallets for user
+                const { data, error } = await supabase
+                    .from('wallets')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+
+                if (error) throw error
+
+                const presentTypes = (data || []).map(w => w.wallet_type)
+                // Create spot wallet if missing
+                if (!presentTypes.includes('spot')) {
+                    await createDefaultWallet('spot', 'BK')
+                } else {
+                    // make sure token_symbol is BK for spot
+                    const spot = data.find(w => w.wallet_type === 'spot')
+                    if (spot && spot.token_symbol !== 'BK') {
+                        await supabase.from('wallets').update({ token_symbol: 'BK' }).eq('id', spot.id)
+                    }
+                }
+                // Create futures wallet if missing
+                if (!presentTypes.includes('futures')) {
+                    await createDefaultWallet('futures', 'USDT')
+                } else {
+                    const fut = data.find(w => w.wallet_type === 'futures')
+                    if (fut && fut.token_symbol !== 'USDT') {
+                        await supabase.from('wallets').update({ token_symbol: 'USDT' }).eq('id', fut.id)
+                    }
+                }
+
+                // create a placeholder withdrawal_addresses row if none exists for this user (prevents some server-side queries assuming row exists)
+                const { data: addrData, error: addrErr } = await supabase
+                    .from('withdrawal_addresses')
+                    .select('id')
+                    .eq('user_id', currentUser.id)
+                    .limit(1)
+
+                if (addrErr) {
+                    console.warn('check address error', addrErr)
+                } else if (!addrData || addrData.length === 0) {
+                    // insert a placeholder row with empty address (optional)
+                    await supabase.from('withdrawal_addresses').insert({
+                        user_id: currentUser.id,
+                        wallet_address: '',
+                        full_name: '',
+                        is_default: true
+                    })
+                }
+
+            } catch (err) {
+                console.error('ensure default wallets error', err)
+            }
+        }
+
+        // Create default wallet (attempts to migrate bk_tokens into spot wallet if present)
+        async function createDefaultWallet(walletType, tokenSymbol) {
+            try {
+                let initialBalance = 0
+                if (walletType === 'spot' && tokenSymbol === 'BK') {
+                    // try to migrate user's bk_tokens column (if they have legacy stored tokens)
+                    const { data: userData, error: userErr } = await supabase
+                        .from('users')
+                        .select('bk_tokens')
+                        .eq('id', currentUser.id)
+                        .single()
+
+                    if (!userErr && userData?.bk_tokens) {
+                        initialBalance = userData.bk_tokens
+                        // set legacy value to 0 (best-effort)
+                        await supabase.from('users').update({ bk_tokens: 0 }).eq('id', currentUser.id)
+                    }
+                }
+
+                const { error } = await supabase
+                    .from('wallets')
+                    .insert({
+                        user_id: currentUser.id,
+                        wallet_type,
+                        balance: initialBalance,
+                        token_symbol: tokenSymbol
+                    })
+
+                if (error) throw error
+                return true
+            } catch (err) {
+                console.error(`createDefaultWallet ${walletType} error`, err)
+                return false
+            }
+        }
+
+        // Load wallets into `wallets` state
+        async function loadWallets() {
+            if (!currentUser) return
+            try {
+                const { data, error } = await supabase
+                    .from('wallets')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+
+                if (error) throw error
+                wallets = {}
+                (data || []).forEach(w => wallets[w.wallet_type] = w)
+
+                // fallback: ensure token symbols for known wallets
+                if (!wallets.spot) wallets.spot = { balance: 0, token_symbol: 'BK' }
+                if (!wallets.futures) wallets.futures = { balance: 0, token_symbol: 'USDT' }
+
+            } catch (err) {
+                console.error('loadWallets error', err)
+                showNotification('Failed to load wallets', true)
+            }
+        }
+
+        // Load exchange rate
+        async function loadExchangeRate() {
+            try {
+                const { data, error } = await supabase
+                    .from('exchange_rates')
+                    .select('rate')
+                    .eq('from_token', 'BK')
+                    .eq('to_token', 'USDT')
+                    .single()
+
+                if (!error && data) exchangeRate = data.rate
+                document.getElementById('rate-value').textContent = `1 USDT = ${1 / (exchangeRate || 0.001)} BK (rate stored)`
+            } catch (err) {
+                console.warn('loadExchangeRate fallback', err)
+            }
+        }
+
+        // Load saved withdrawal address (default)
+        async function loadSavedAddress() {
+            if (!currentUser) return
+            try {
+                const { data, error } = await supabase
+                    .from('withdrawal_addresses')
+                    .select('wallet_address, full_name')
+                    .eq('user_id', currentUser.id)
+                    .eq('is_default', true)
+                    .single()
+
+                if (!error && data) {
+                    savedAddress = data
+                    walletAddress.value = data.wallet_address || ''
+                    fullName.value = data.full_name || ''
+                    manageWalletAddress.value = data.wallet_address || ''
+                    manageFullName.value = data.full_name || ''
+                } else {
+                    savedAddress = null
+                }
+            } catch (err) {
+                console.warn('no saved withdrawal address', err)
+            }
+        }
+
+        // Load check-in status
+        async function loadCheckinStatus() {
+            try {
+                const today = new Date().toISOString().split('T')[0]
+                const { data, error } = await supabase
+                    .from('daily_checkins')
+                    .select('created_at')
+                    .eq('user_id', currentUser.id)
+                    .eq('checkin_date', today)
+                    .single()
+
+                if (!error && data) {
+                    lastCheckin = new Date(data.created_at)
+                    checkinBtn.disabled = true
+                    checkinBtn.textContent = 'Already Checked In'
+                    checkinStatus.textContent = 'Last checked in: Today'
+                } else {
+                    checkinBtn.disabled = false
+                    checkinBtn.textContent = 'Claim Now'
+                    checkinStatus.textContent = 'Last checked in: Never'
+                }
+            } catch (err) {
+                checkinBtn.disabled = false
+                checkinBtn.textContent = 'Claim Now'
+                checkinStatus.textContent = 'Last checked in: Never'
+            }
+        }
+
+        // Update balances UI
+        function updateBalancesUI() {
+            const spotWallet = wallets.spot || { balance: 0, token_symbol: 'BK' }
+            const futuresWallet = wallets.futures || { balance: 0, token_symbol: 'USDT' }
+
+            totalBkTokens.textContent = `${parseFloat(spotWallet.balance || 0).toFixed(2)} ${spotWallet.token_symbol}`
+            usdEquivalent.textContent = (parseFloat(spotWallet.balance || 0) * exchangeRate).toFixed(2)
+
+            spotBalance.textContent = `${parseFloat(spotWallet.balance || 0).toFixed(2)} ${spotWallet.token_symbol}`
+            spotUsd.textContent = (parseFloat(spotWallet.balance || 0) * exchangeRate).toFixed(2)
+
+            futuresBalance.textContent = `${parseFloat(futuresWallet.balance || 0).toFixed(4)} ${futuresWallet.token_symbol}`
+            futuresUsd.textContent = parseFloat(futuresWallet.balance || 0).toFixed(2)
+            futuresUsdtBalance.textContent = parseFloat(futuresWallet.balance || 0).toFixed(4)
+
+            exchangeAvailableBalance.textContent = `${parseFloat(spotWallet.balance || 0).toFixed(2)} ${spotWallet.token_symbol}`
+            updateExchangeEstimate()
+        }
+
+        // Update transfer UI
+        function updateTransferUI() {
+            const fromWalletType = transferFrom.value
+            const toWalletType = transferTo.value
+
+            const fromWallet = wallets[fromWalletType] || { token_symbol: fromWalletType === 'spot' ? 'BK' : 'USDT', balance: 0 }
+            const toWallet = wallets[toWalletType] || { token_symbol: toWalletType === 'spot' ? 'BK' : 'USDT', balance: 0 }
+
+            fromToken.textContent = fromWallet.token_symbol
+            toToken.textContent = toWallet.token_symbol
+            maxToken.textContent = fromWallet.token_symbol
+            transferTokenName.textContent = fromWallet.token_symbol === 'BK' ? 'BK Token' : 'USDT Token'
+
+            const fromBalance = fromWallet.balance || 0
+            const toBalance = toWallet.balance || 0
+
+            fromAvailable.textContent = parseFloat(fromBalance).toFixed(fromWallet.token_symbol === 'BK' ? 2 : 4)
+            toAvailable.textContent = parseFloat(toBalance).toFixed(toWallet.token_symbol === 'BK' ? 2 : 4)
+            maxAvailableAmount.textContent = parseFloat(fromBalance).toFixed(fromWallet.token_symbol === 'BK' ? 2 : 4)
+
+            maxTransfer.disabled = parseFloat(fromBalance) <= 0
+        }
+
+        // Update exchange estimate
+        function updateExchangeEstimate() {
+            const amount = parseFloat(exchangeAmount.value) || 0
+            const estimate = amount * exchangeRate
+            exchangeEstimate.textContent = estimate.toFixed(4)
+        }
+
+        // Transfer handler
+        async function handleTransfer(e) {
+            if (e) e.preventDefault()
+            const fromWalletType = transferFrom.value
+            const toWalletType = transferTo.value
+            const amount = parseFloat(transferAmount.value)
+
+            if (!amount || amount <= 0) {
+                showNotification('Please enter a valid amount', true)
+                return
+            }
+
+            const fromWallet = wallets[fromWalletType]
+            const toWallet = wallets[toWalletType]
+            if (!fromWallet || !toWallet) {
+                showNotification('Wallets not found', true)
+                return
+            }
+
+            if (fromWallet.token_symbol !== toWallet.token_symbol) {
+                showNotification('Transfers only allowed between same token types', true)
+                return
+            }
+
+            if (amount > parseFloat(fromWallet.balance || 0)) {
+                showNotification('Insufficient balance', true)
+                return
+            }
+
+            try {
+                submitTransfer.disabled = true
+                const { error } = await supabase.rpc('transfer_tokens', {
+                    p_user_id: currentUser.id,
+                    p_from_wallet_id: fromWallet.id,
+                    p_to_wallet_id: toWallet.id,
+                    p_amount: amount
+                })
+                if (error) throw error
+                await loadWallets()
+                updateBalancesUI()
+                transferAmount.value = ''
+                showNotification(`Successfully transferred ${amount} ${fromWallet.token_symbol}`)
+            } catch (err) {
+                console.error('Transfer error:', err)
+                showNotification('Transfer failed: ' + (err.message || JSON.stringify(err)), true)
+            } finally {
+                submitTransfer.disabled = false
+            }
+        }
+
+        // Checkin
+        async function handleCheckin(e) {
+            if (e) e.preventDefault()
+            try {
+                checkinBtn.disabled = true
+                const { error: awardError } = await supabase.rpc('award_checkin_tokens', {
+                    p_user_id: currentUser.id,
+                    p_amount: 50
+                })
+                if (awardError) throw awardError
+                await supabase.from('daily_checkins').insert({
+                    user_id: currentUser.id,
+                    checkin_date: new Date().toISOString().split('T')[0],
+                    tokens_earned: 50
+                })
+                await loadWallets()
+                updateBalancesUI()
+                loadCheckinStatus()
+                showNotification('50 BK tokens awarded for daily check-in!')
+            } catch (err) {
+                console.error('checkin error', err)
+                showNotification('Check-in failed: ' + (err.message || 'Unknown error'), true)
+                checkinBtn.disabled = false
+            }
+        }
+
+        // Spin
+        async function handleSpin(e) {
+            if (e) e.preventDefault()
+            try {
+                spinBtn.disabled = true
+                const { error: spinError } = await supabase.rpc('deduct_spin_cost', {
+                    p_user_id: currentUser.id
+                })
+                if (spinError) throw spinError
+
+                // simple prize logic (server ideally should do this)
+                const prizes = [0, 0, 0, 1, 10, 100]
+                const prize = Math.random() > 0.9 ? prizes[Math.floor(Math.random() * prizes.length)] : 0
+                if (prize > 0) {
+                    const { error: awardError } = await supabase.rpc('award_spin_prize', {
+                        p_user_id: currentUser.id,
+                        p_amount: prize
+                    })
+                    if (awardError) throw awardError
+                }
+                await supabase.from('spin_records').insert({
+                    user_id: currentUser.id,
+                    tokens_spent: 1,
+                    prize_won: `${prize}bk`,
+                    tokens_won: prize
+                })
+                await loadWallets()
+                updateBalancesUI()
+                showNotification(prize > 0 ? `You won ${prize} BK!` : 'No prize this time. Try again.')
+            } catch (err) {
+                console.error('spin error', err)
+                showNotification('Spin failed: ' + (err.message || 'Unknown error'), true)
+            } finally {
+                spinBtn.disabled = false
+            }
+        }
+
+        // Withdraw
+        async function handleWithdraw(e) {
+            e.preventDefault()
+            const address = walletAddress.value.trim()
+            const name = fullName.value.trim()
+            const amount = parseFloat(withdrawAmount.value)
+
+            if (!address || !name) {
+                showNotification('Please fill address and full name before withdrawing', true)
+                return
+            }
+            if (!amount || amount < 1) {
+                showNotification('Minimum withdrawal is 1 USDT', true)
+                return
+            }
+
+            const futuresWallet = wallets.futures || { balance: 0, token_symbol: 'USDT' }
+            if (amount > parseFloat(futuresWallet.balance || 0)) {
+                showNotification('Insufficient USDT balance for withdrawal', true)
+                return
+            }
+
+            try {
+                // Save/update address (so user doesn't have to enter every time)
+                const { error: addressError } = await supabase
+                    .from('withdrawal_addresses')
+                    .upsert({
+                        user_id: currentUser.id,
+                        wallet_address: address,
+                        full_name: name,
+                        is_default: true
+                    }, { onConflict: 'user_id' })
+
+                if (addressError) throw addressError
+
+                // Call the RPC to process withdrawal (server handles actual execution)
+                const { error: withdrawError } = await supabase.rpc('process_withdrawal', {
+                    p_user_id: currentUser.id,
+                    p_amount: amount,
+                    p_address: address,
+                    p_token_symbol: 'USDT'
+                })
+
+                if (withdrawError) throw withdrawError
+
+                // Refresh
+                await loadWallets()
+                updateBalancesUI()
+                withdrawModal.style.display = 'none'
+                withdrawForm.reset()
+                showNotification(`Withdrawal of ${amount} USDT initiated!`)
+            } catch (err) {
+                console.error('Withdrawal error:', err)
+                // Provide the server message if present
+                const msg = err?.message || JSON.stringify(err)
+                showNotification('Withdrawal failed: ' + msg, true)
+            }
+        }
+
+        // Exchange
+        async function handleExchange(e) {
+            e.preventDefault()
+            const amount = parseFloat(exchangeAmount.value)
+            if (!amount || amount < 1000) {
+                showNotification('Minimum exchange is 1000 BK', true)
+                return
+            }
+            const spotWallet = wallets.spot || { balance: 0 }
+            if (amount > parseFloat(spotWallet.balance || 0)) {
+                showNotification('Insufficient BK balance for exchange', true)
+                return
+            }
+
+            try {
+                // Disable UI while processing
+                exchangeForm.querySelector('button[type="submit"]').disabled = true
+
+                // Call RPC to exchange BK -> USDT
+                const { error: exchangeError } = await supabase.rpc('exchange_bk_to_usdt', {
+                    p_user_id: currentUser.id,
+                    p_bk_amount: amount
+                })
+                if (exchangeError) throw exchangeError
+
+                // refresh wallets & UI
+                await Promise.all([loadWallets(), loadExchangeRate()])
+                updateBalancesUI()
+                exchangeModal.style.display = 'none'
+                exchangeForm.reset()
+                showNotification(`Successfully exchanged ${amount} BK to ${(amount * exchangeRate).toFixed(4)} USDT!`)
+            } catch (err) {
+                console.error('Exchange error:', err)
+                const msg = err?.message || JSON.stringify(err)
+                // Common server errors may be token mismatch or futures wallet missing; surface the message
+                showNotification('Exchange failed: ' + msg, true)
+            } finally {
+                exchangeForm.querySelector('button[type="submit"]').disabled = false
+            }
+        }
+
+        // Manage address save
+        async function handleSaveAddress(e) {
+            if (e) e.preventDefault()
+            const address = manageWalletAddress.value.trim()
+            const name = manageFullName.value.trim()
+
+            try {
+                saveAddressBtn.disabled = true
+                const { error } = await supabase
+                    .from('withdrawal_addresses')
+                    .upsert({
+                        user_id: currentUser.id,
+                        wallet_address: address,
+                        full_name: name,
+                        is_default: true
+                    }, { onConflict: 'user_id' })
+                if (error) throw error
+                await loadSavedAddress()
+                showNotification('Address saved')
+                manageAddressModal.style.display = 'none'
+            } catch (err) {
+                console.error('save address error', err)
+                showNotification('Save failed: ' + (err.message || JSON.stringify(err)), true)
+            } finally {
+                saveAddressBtn.disabled = false
+            }
+        }
+
+        // Remove address
+        async function handleRemoveAddress() {
+            try {
+                removeAddressBtn.disabled = true
+                const { error } = await supabase
+                    .from('withdrawal_addresses')
+                    .update({ wallet_address: '', full_name: '' })
+                    .eq('user_id', currentUser.id)
+                if (error) throw error
+                manageWalletAddress.value = ''
+                manageFullName.value = ''
+                walletAddress.value = ''
+                fullName.value = ''
+                savedAddress = null
+                showNotification('Address removed')
+                manageAddressModal.style.display = 'none'
+            } catch (err) {
+                console.error('remove address error', err)
+                showNotification('Removal failed', true)
+            } finally {
+                removeAddressBtn.disabled = false
+            }
+        }
+
+        // Logout
+        async function handleLogout() {
+            try {
+                await supabase.auth.signOut()
+            } catch (err) {
+                console.warn('logout error', err)
+            } finally {
+                window.location.href = 'login.html'
+            }
+        }
+
+        // Utilities: open/close modals
+        function openModal(el){ el.style.display='flex' }
+        function closeModal(el){ el.style.display='none' }
+
+        // Event listeners wiring
+        transferFrom.addEventListener('change', updateTransferUI)
+        transferTo.addEventListener('change', updateTransferUI)
+
+        maxTransfer.addEventListener('click', () => {
+            const fromWallet = wallets[transferFrom.value] || { balance: 0, token_symbol: 'BK' }
+            transferAmount.value = parseFloat(fromWallet.balance || 0).toFixed(fromWallet.token_symbol === 'BK' ? 2 : 4)
+        })
+        submitTransfer.addEventListener('click', handleTransfer)
+        checkinBtn.addEventListener('click', handleCheckin)
+        spinBtn.addEventListener('click', handleSpin)
+        withdrawBtn.addEventListener('click', () => openModal(withdrawModal))
+        exchangeBtn.addEventListener('click', () => openModal(exchangeModal))
+        quickExchangeBtn.addEventListener('click', () => openModal(exchangeModal))
+        closeWithdrawModal.addEventListener('click', () => closeModal(withdrawModal))
+        closeExchangeModal.addEventListener('click', () => closeModal(exchangeModal))
+        withdrawForm.addEventListener('submit', handleWithdraw)
+        exchangeForm.addEventListener('submit', handleExchange)
+        exchangeAmount.addEventListener('input', updateExchangeEstimate)
+
+        manageAddressBtn.addEventListener('click', () => openModal(manageAddressModal))
+        closeManageAddress.addEventListener('click', () => closeModal(manageAddressModal))
+        manageAddressForm.addEventListener('submit', handleSaveAddress)
+        saveAddressBtn.addEventListener('click', handleSaveAddress)
+        removeAddressBtn.addEventListener('click', handleRemoveAddress)
+        openManageAddressFromWithdraw.addEventListener('click', () => {
+            closeModal(withdrawModal); openModal(manageAddressModal)
+        })
+
+        logoutBtn.addEventListener('click', handleLogout)
+        historyBtn.addEventListener('click', () => { window.location.href = 'history.html' })
+
+        transferToFuturesBtn.addEventListener('click', () => {
+            transferFrom.value = 'spot'; transferTo.value = 'futures'; updateTransferUI()
+        })
+        transferToSpotBtn.addEventListener('click', () => {
+            transferFrom.value = 'futures'; transferTo.value = 'spot'; updateTransferUI()
+        })
+
+        // Close modals on background click
+        window.addEventListener('click', (e) => {
+            if (e.target === withdrawModal) closeModal(withdrawModal)
+            if (e.target === exchangeModal) closeModal(exchangeModal)
+            if (e.target === manageAddressModal) closeModal(manageAddressModal)
+        })
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initDashboard)
+    </script>
+</body>
+</html>
