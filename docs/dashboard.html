@@ -781,4 +781,174 @@
             } catch (err) {
                 console.error('Withdrawal error:', err)
                 if (err.message?.includes('insufficient')) {
-                    showNotification('Insufficient balance
+    showNotification('Insufficient balance', true)
+} else {
+    showNotification('Withdrawal failed: ' + (err.message || 'Unknown error'), true)
+                
+                }
+            }
+        }
+
+        // Handle exchange
+        async function handleExchange(e) {
+            e.preventDefault()
+            
+            const amount = parseFloat(exchangeAmount.value)
+            
+            if (!amount || amount < 1000) {
+                showNotification('Minimum exchange is 1000 BK', true)
+                return
+            }
+            
+            const spotWallet = wallets.spot || { balance: 0, token_symbol: 'BK' }
+            
+            if (amount > parseFloat(spotWallet.balance)) {
+                showNotification('Insufficient BK balance for exchange', true)
+                return
+            }
+            
+            try {
+                // Perform exchange
+                const { error: exchangeError } = await supabase.rpc('exchange_bk_to_usdt', {
+                    p_user_id: currentUser.id,
+                    p_bk_amount: amount
+                })
+                
+                if (exchangeError) throw exchangeError
+                
+                // Reload wallets and exchange rate
+                await Promise.all([
+                    loadWallets(),
+                    loadExchangeRate()
+                ])
+                
+                // Close modal and reset form
+                exchangeModal.style.display = 'none'
+                exchangeForm.reset()
+                
+                showNotification(`Successfully exchanged ${amount} BK to ${(amount * exchangeRate).toFixed(4)} USDT!`)
+                
+            } catch (err) {
+                console.error('Exchange error:', err)
+                if (err.message?.includes('insufficient')) {
+    showNotification('Insufficient balance', true)
+} else {
+    showNotification('Withdrawal failed: ' + (err.message || 'Unknown error'), true)
+                }
+            }
+        }
+
+        // Handle exchange
+        async function handleExchange(e) {
+            e.preventDefault()
+            
+            const amount = parseFloat(exchangeAmount.value)
+            
+            if (!amount || amount < 1000) {
+                showNotification('Minimum exchange is 1000 BK', true)
+                return
+            }
+            
+            const spotWallet = wallets.spot || { balance: 0, token_symbol: 'BK' }
+            
+            if (amount > parseFloat(spotWallet.balance)) {
+                showNotification('Insufficient BK balance for exchange', true)
+                return
+            }
+            
+            try {
+                // Perform exchange
+                const { error: exchangeError } = await supabase.rpc('exchange_bk_to_usdt', {
+                    p_user_id: currentUser.id,
+                    p_bk_amount: amount
+                })
+                
+                if (exchangeError) throw exchangeError
+                
+                // Reload wallets and exchange rate
+                await Promise.all([
+                    loadWallets(),
+                    loadExchangeRate()
+                ])
+                
+                // Close modal and reset form
+                exchangeModal.style.display = 'none'
+                exchangeForm.reset()
+                
+                showNotification(`Successfully exchanged ${amount} BK to ${(amount * exchangeRate).toFixed(4)} USDT!`)
+                
+            } catch (err) {
+                console.error('Exchange error:', err)
+                if (err.message?.includes('insufficient')) {
+                    showNotification('Insufficient balance', true)
+                } else {
+                    showNotification('Exchange failed: ' + (err.message || 'Unknown error'), true)
+                }
+            }
+        }
+
+        // Show notification
+        function showNotification(message, isError = false) {
+            notification.textContent = message
+            notification.className = 'notification' + (isError ? ' error' : '')
+            notification.style.display = 'block'
+            
+            setTimeout(() => {
+                notification.style.display = 'none'
+            }, 3000)
+        }
+
+        // Event Listeners
+        transferFrom.addEventListener('change', updateTransferUI)
+        transferTo.addEventListener('change', updateTransferUI)
+        transferAmount.addEventListener('input', () => {
+            const amount = parseFloat(transferAmount.value) || 0
+            const fromWallet = wallets[transferFrom.value] || { balance: 0 }
+            if (amount > parseFloat(fromWallet.balance)) {
+                transferAmount.setCustomValidity('Amount exceeds available balance')
+            } else {
+                transferAmount.setCustomValidity('')
+            }
+        })
+        maxTransfer.addEventListener('click', () => {
+            const fromWallet = wallets[transferFrom.value] || { balance: 0 }
+            transferAmount.value = parseFloat(fromWallet.balance).toFixed(fromWallet.token_symbol === 'BK' ? 2 : 4)
+        })
+        submitTransfer.addEventListener('click', handleTransfer)
+        checkinBtn.addEventListener('click', handleCheckin)
+        spinBtn.addEventListener('click', handleSpin)
+        withdrawBtn.addEventListener('click', () => {
+            withdrawModal.style.display = 'block'
+        })
+        exchangeBtn.addEventListener('click', () => {
+            exchangeModal.style.display = 'block'
+        })
+        quickExchangeBtn.addEventListener('click', () => {
+            exchangeModal.style.display = 'block'
+        })
+        closeWithdrawModal.addEventListener('click', () => {
+            withdrawModal.style.display = 'none'
+        })
+        closeExchangeModal.addEventListener('click', () => {
+            exchangeModal.style.display = 'none'
+        })
+        withdrawForm.addEventListener('submit', handleWithdraw)
+        exchangeForm.addEventListener('submit', handleExchange)
+        exchangeAmount.addEventListener('input', updateExchangeEstimate)
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === withdrawModal) {
+                withdrawModal.style.display = 'none'
+            }
+            if (e.target === exchangeModal) {
+                exchangeModal.style.display = 'none'
+            }
+        })
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initDashboard)
+    </script>
+</body>
+</html>
+                
