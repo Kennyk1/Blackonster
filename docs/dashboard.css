@@ -1,0 +1,277 @@
+/* ==== GLOBAL SETTINGS ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #0b0c10;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==== DASHBOARD CONTAINER ==== */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #101820;
+  padding: 15px 25px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard-header .logo {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #00bcd4;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #00bcd4;
+}
+
+/* ==== MAIN DASHBOARD ==== */
+.dashboard-main {
+  flex: 1;
+  padding: 25px;
+}
+
+.balance-section {
+  background: #1a1f24;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.1);
+}
+
+.balance-section h2 {
+  color: #00bcd4;
+  margin-bottom: 10px;
+}
+
+.value-display {
+  font-size: 2.2em;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.btc-value {
+  color: #ffd700;
+}
+
+.usd-value {
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+.action-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ==== BUTTONS ==== */
+.btn {
+  background: #00bcd4;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background: #0097a7;
+  transform: scale(1.05);
+}
+
+.btn.withdraw {
+  background: #ff5252;
+}
+
+.btn.withdraw:hover {
+  background: #e53935;
+}
+
+.btn.exchange {
+  background: #4caf50;
+}
+
+.btn.exchange:hover {
+  background: #388e3c;
+}
+
+/* ==== WALLET CARDS ==== */
+.wallets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.wallet-card {
+  background: #1a1f24;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wallet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(0, 188, 212, 0.2);
+}
+
+.wallet-card h3 {
+  color: #00bcd4;
+  margin-bottom: 10px;
+}
+
+.wallet-balance {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+/* ==== MODALS ==== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #101820;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 25px rgba(0, 188, 212, 0.15);
+}
+
+.modal-content h2 {
+  color: #00bcd4;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #aaa;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: #fff;
+}
+
+/* ==== FORM ELEMENTS ==== */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #1e272e;
+  color: #fff;
+}
+
+/* ==== NOTIFICATIONS ==== */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1a1f24;
+  border-left: 4px solid #00bcd4;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.2);
+  color: #e0e0e0;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.notification.show {
+  display: block;
+}
+
+.notification.error {
+  border-left: 4px solid #ff5252;
+}
+
+/* ==== ANIMATIONS ==== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .balance-section {
+    padding: 15px;
+  }
+
+  .wallets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    padding: 8px 15px;
+  }
+}
