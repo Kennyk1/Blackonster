@@ -831,55 +831,6 @@
             } catch (err) {
                 console.error('Exchange error:', err)
                 if (err.message?.includes('insufficient')) {
-    showNotification('Insufficient balance', true)
-} else {
-    showNotification('Withdrawal failed: ' + (err.message || 'Unknown error'), true)
-                }
-            }
-        }
-
-        // Handle exchange
-        async function handleExchange(e) {
-            e.preventDefault()
-            
-            const amount = parseFloat(exchangeAmount.value)
-            
-            if (!amount || amount < 1000) {
-                showNotification('Minimum exchange is 1000 BK', true)
-                return
-            }
-            
-            const spotWallet = wallets.spot || { balance: 0, token_symbol: 'BK' }
-            
-            if (amount > parseFloat(spotWallet.balance)) {
-                showNotification('Insufficient BK balance for exchange', true)
-                return
-            }
-            
-            try {
-                // Perform exchange
-                const { error: exchangeError } = await supabase.rpc('exchange_bk_to_usdt', {
-                    p_user_id: currentUser.id,
-                    p_bk_amount: amount
-                })
-                
-                if (exchangeError) throw exchangeError
-                
-                // Reload wallets and exchange rate
-                await Promise.all([
-                    loadWallets(),
-                    loadExchangeRate()
-                ])
-                
-                // Close modal and reset form
-                exchangeModal.style.display = 'none'
-                exchangeForm.reset()
-                
-                showNotification(`Successfully exchanged ${amount} BK to ${(amount * exchangeRate).toFixed(4)} USDT!`)
-                
-            } catch (err) {
-                console.error('Exchange error:', err)
-                if (err.message?.includes('insufficient')) {
                     showNotification('Insufficient balance', true)
                 } else {
                     showNotification('Exchange failed: ' + (err.message || 'Unknown error'), true)
