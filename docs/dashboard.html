@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Blackonstar AI - Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Wallet Creation Modal -->
+        <div class="modal" id="wallet-creation-modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Create Your Wallet</h2>
+                <p>Welcome! To get started, please create your wallet.</p>
+                <form id="wallet-creation-form">
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="wallet-address">BSC Wallet Address (Optional)</label>
+                        <input type="text" id="wallet-address" class="form-control" placeholder="Enter your BSC wallet address">
+                    </div>
+                    <button type="submit" class="btn" id="create-wallet-btn">Create Wallet</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div id="dashboard-content" style="display: none;">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="logo">
+                        <h1>Blackonstar AI</h1>
+                    </div>
+                    <div>
+                        <button class="btn" id="history-btn"><i class="fas fa-history"></i> History</button>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <div class="user-info">
+                        <span class="username">Welcome, <strong id="user-display-name">Loading...</strong></span>
+                        <div class="avatar" id="user-avatar">U</div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <button class="btn" id="manage-address-btn"><i class="fas fa-map-marker-alt"></i> Address</button>
+                        <button class="btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main -->
+            <main class="dashboard-main">
+                <!-- Balance -->
+                <section class="balance-section">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                        <div>
+                            <h3 style="margin:0">Spot Value (est.)</h3>
+                            <div class="value-display">
+                                <span class="btc-value" id="total-bk-tokens">0 BK</span>
+                                <span class="usd-value">≈ $<span id="usd-equivalent">0.00</span> USD</span>
+                            </div>
+                        </div>
+
+                        <div style="text-align:right;">
+                            <h4 style="margin:0">Futures Wallet (USDT)</h4>
+                            <div style="font-weight:600"><span id="futures-usdt-balance">0.0000</span> USDT</div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn exchange" id="exchange-btn"><i class="fas fa-exchange-alt"></i> Exchange</button>
+                        <button class="btn withdraw" id="withdraw-btn"><i class="fas fa-minus-circle"></i> Withdraw</button>
+                    </div>
+                </section>
+
+                <!-- Wallet cards -->
+                <section class="wallet-section">
+                    <div class="wallet-card spot-wallet">
+                        <div class="wallet-header">
+                            <h3>Spot Wallet</h3>
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="wallet-balance">
+                            <span class="amount" id="spot-balance">0.00 BK</span>
+                            <div class="equivalent" style="color:var(--muted)">≈ $<span id="spot-usd">0.00</span> USD</div>
+                        </div>
+                        <div class="wallet-actions">
+                            <button class="btn" id="transfer-to-futures" data-from="spot" data-to="futures">Transfer → Futures</button>
+                        </div>
+                    </div>
+
+                    <div class="wallet-card futures-wallet">
+                        <div class="wallet-header">
+                            <h3>USDT-M Futures</h3>
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="wallet-balance">
+                            <span class="amount" id="futures-balance">0.00 USDT</span>
+                            <div class="equivalent" style="color:var(--muted)">≈ $<span id="futures-usd">0.00</span> USD</div>
+                        </div>
+                        <div class="wallet-actions">
+                            <button class="btn" id="transfer-to-spot" data-from="futures" data-to="spot">Transfer → Spot</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Transfer -->
+                <section class="transfer-section">
+                    <h2 class="section-title">Transfer Tokens</h2>
+                    <div class="transfer-container">
+                        <div class="transfer-form">
+                            <div class="transfer-row">
+                                <div class="transfer-column">
+                                    <label>From</label>
+                                    <div class="wallet-selector">
+                                        <select id="transfer-from">
+                                            <option value="spot">Spot (BK)</option>
+                                            <option value="futures">USDT-M Futures (USDT)</option>
+                                        </select>
+                                        <div style="font-size:12px;color:var(--muted);margin-top:6px">Available: <span id="from-available">0.00</span> <span id="from-token">BK</span></div>
+                                    </div>
+                                </div>
+
+                                <div class="transfer-column">
+                                    <label>To</label>
+                                    <div class="wallet-selector">
+                                        <select id="transfer-to">
+                                            <option value="futures">USDT-M Futures (USDT)</option>
+                                            <option value="spot">Spot (BK)</option>
+                                        </select>
+                                        <div style="font-size:12px;color:var(--muted);margin-top:6px">Available: <span id="to-available">0.00</span> <span id="to-token">USDT</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="transfer-row coin-row">
+                                <label style="width:100%">Coin</label>
+                                <div class="coin-display" style="display:flex;gap:8px;align-items:center;">
+                                    <div style="font-weight:600" id="transfer-token-name">BK Token</div>
+                                </div>
+                            </div>
+
+                            <div class="transfer-row amount-row">
+                                <label style="width:100%">Transfer Amount</label>
+                                <div class="amount-input" style="width:100%">
+                                    <input type="number" id="transfer-amount" placeholder="Enter amount" step="0.01" min="0" />
+                                    <button class="btn max-btn" id="max-transfer">Max</button>
+                                </div>
+                                <div style="font-size:12px;color:var(--muted)">Available: <span id="max-available-amount">0.00</span> <span id="max-token">BK</span></div>
+                            </div>
+
+                            <div style="margin-top:10px;">
+                                <button class="btn" id="submit-transfer">Transfer</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activities -->
+                <section class="activities-section">
+                    <div class="activity-card checkin-card">
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <i class="fas fa-calendar-check"></i>
+                            <div>
+                                <h3>Daily Check-in</h3>
+                                <p style="color:var(--muted);margin:4px 0 8px 0">Claim your daily rewards</p>
+                                <button class="btn claim-btn" id="checkin-btn">Claim Now</button>
+                                <div class="checkin-status" id="checkin-status" style="margin-top:8px;color:var(--muted);font-size:13px">Last checked in: Never</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card spin-card">
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <i class="fas fa-spinner"></i>
+                            <div>
+                                <h3>Spin to Win</h3>
+                                <p style="color:var(--muted);margin:4px 0 8px 0">Try your luck to win prizes</p>
+                                <button class="btn spin-btn" id="spin-btn">Spin Now (1 BK)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-card exchange-card">
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <i class="fas fa-exchange-alt"></i>
+                            <div>
+                                <h3>Exchange</h3>
+                                <p style="color:var(--muted);margin:4px 0 8px 0">Convert your tokens (Min 1000 BK)</p>
+                                <button class="btn" id="quick-exchange-btn">Exchange</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Withdraw Modal -->
+            <div class="modal" id="withdraw-modal">
+                <div class="modal-content">
+                    <span class="close-modal" id="close-withdraw-modal">&times;</span>
+                    <h2 class="modal-title">Withdraw Funds</h2>
+                    <form id="withdraw-form">
+                        <div class="form-group">
+                            <label for="withdraw-wallet-address">BSC Wallet Address</label>
+                            <input type="text" id="withdraw-wallet-address" class="form-control" placeholder="Enter your BSC wallet address">
+                            <div style="font-size:12px;color:var(--muted);margin-top:6px">You can save an address to reuse for future withdrawals. Not required to view dashboard or exchange tokens.</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="withdraw-full-name">Full Name</label>
+                            <input type="text" id="withdraw-full-name" class="form-control" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="withdraw-amount">Amount (USDT)</label>
+                            <input type="number" id="withdraw-amount" class="form-control" placeholder="Enter amount" step="0.0001" min="1">
+                            <div class="form-hint">Minimum withdrawal: 1 USDT ($1.00 USD)</div>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button type="submit" class="btn submit-btn">Process Withdrawal</button>
+                            <button type="button" class="btn" id="open-manage-address-from-withdraw">Manage Address</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Address Modal -->
+            <div class="modal" id="manage-address-modal">
+                <div class="modal-content">
+                    <span class="close-modal" id="close-manage-address">&times;</span>
+                    <h2 class="modal-title">Manage Withdrawal Address</h2>
+                    <form id="manage-address-form">
+                        <div class="form-group">
+                            <label for="manage-wallet-address">BSC Wallet Address</label>
+                            <input type="text" id="manage-wallet-address" class="form-control" placeholder="Enter BSC wallet address (optional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="manage-full-name">Full Name</label>
+                            <input type="text" id="manage-full-name" class="form-control" placeholder="Full name (optional)">
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn" id="save-address-btn" type="submit">Save Address</button>
+                            <button class="btn" id="remove-address-btn" type="button">Remove Address</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Exchange Modal -->
+            <div class="modal" id="exchange-modal">
+                <div class="modal-content">
+                    <span class="close-modal" id="close-exchange-modal">&times;</span>
+                    <h2 class="modal-title">Exchange BK to USDT</h2>
+                    <div class="exchange-info" style="margin-bottom:10px;">
+                        <div><strong>Exchange Rate:</strong> <span class="rate-value" id="rate-value">1000 BK = 1 USDT</span></div>
+                        <div style="color:var(--muted)"><strong>Available Balance:</strong> <span id="exchange-available-balance">0 BK</span></div>
+                    </div>
+                    <form id="exchange-form">
+                        <div class="form-group">
+                            <label for="exchange-amount">Amount to Exchange (BK)</label>
+                            <input type="number" id="exchange-amount" class="form-control" placeholder="Enter amount" step="1" min="1000">
+                            <div class="form-hint">You will receive <span id="exchange-estimate">0.0000</span> USDT</div>
+                        </div>
+                        <div>
+                            <button class="btn" type="submit">Exchange</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Notification -->
+            <div class="notification" id="notification">Operation completed successfully!</div>
+
+            <!-- Footer -->
+            <footer class="dashboard-footer">
+                <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                    <div style="min-width:200px">
+                        <h4 style="margin:0 0 6px 0">Quick Links</h4>
+                        <div style="color:var(--muted)">
+                            <a href="home.html" style="color:inherit;margin-right:8px">Home</a> |
+                            <a href="chat.html" style="color:inherit;margin-left:8px">Chat AI</a> |
+                            <a href="referral.html" style="color:inherit;margin-left:8px">Referral</a>
+                        </div>
+                    </div>
+
+                    <div style="min-width:200px;text-align:right;color:var(--muted)">
+                        <div>&copy; 2025 Blackonstar AI. All rights reserved.</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script type="module" src="dashboard.js"></script>
+</body>
+</html>
