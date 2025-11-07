@@ -198,7 +198,7 @@ async function createUserWallets(fullName, walletAddress) {
 }
 
 // Load wallets into wallets state
-async function loadWallets() {
+async function fetchwallet() {
     if (!currentUser) return
     try {
         const { data, error } = await supabase
