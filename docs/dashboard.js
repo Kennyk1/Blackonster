@@ -515,7 +515,7 @@ async function handleWithdraw(e) {
     }
 }
 
-// Exchange
+// Exchange BK -> USDT
 async function handleExchange(e) {
     e.preventDefault()
     const amount = parseFloat(exchangeAmount.value)
@@ -523,6 +523,7 @@ async function handleExchange(e) {
         showNotification('Minimum exchange is 1000 BK', true)
         return
     }
+
     const spotWallet = wallets.spot || { balance: 0 }
     if (amount > parseFloat(spotWallet.balance || 0)) {
         showNotification('Insufficient BK balance for exchange', true)
@@ -536,51 +537,27 @@ async function handleExchange(e) {
         // Call RPC to exchange BK -> USDT
         const { error: exchangeError } = await supabase.rpc('exchange_bk_to_usdt', {
             p_user_id: currentUser.id,
-            p_bk_amount: amount
+            p_amount: amount,
+            p_rate: exchangeRate // make sure exchangeRate is defined somewhere
         })
+
         if (exchangeError) throw exchangeError
 
-        // refresh wallets & UI
-        await Promise.all([loadWallets(), loadExchangeRate()])
+        // Fetch updated wallets
+        await loadWallets() // or fetchwallet() if that’s your function
+
+        // Update UI
         updateBalancesUI()
+        updateTransferUI()
         exchangeModal.style.display = 'none'
         exchangeForm.reset()
         showNotification(`Successfully exchanged ${amount} BK to ${(amount * exchangeRate).toFixed(4)} USDT!`)
     } catch (err) {
         console.error('Exchange error:', err)
         const msg = err?.message || JSON.stringify(err)
-        // Common server errors may be token mismatch or futures wallet missing; surface the message
         showNotification('Exchange failed: ' + msg, true)
     } finally {
         exchangeForm.querySelector('button[type="submit"]').disabled = false
-    }
-}
-
-// Manage address save
-async function handleSaveAddress(e) {
-    if (e) e.preventDefault()
-    const address = manageWalletAddress.value.trim()
-    const name = manageFullName.value.trim()
-
-    try {
-        saveAddressBtn.disabled = true
-        const { error } = await supabase
-            .from('withdrawal_addresses')
-            .upsert({
-                user_id: currentUser.id,
-                wallet_address: address,
-                full_name: name,
-                is_default: true
-            }, { onConflict: 'user_id' })
-        if (error) throw error
-        await loadSavedAddress()
-        showNotification('Address saved')
-        manageAddressModal.style.display = 'none'
-    } catch (err) {
-        console.error('save address error', err)
-        showNotification('Save failed: ' + (err.message || JSON.stringify(err)), true)
-    } finally {
-        saveAddressBtn.disabled = false
     }
 }
 
