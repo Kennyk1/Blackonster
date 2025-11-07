@@ -208,7 +208,11 @@ async function fetchwallet() {
 
         if (error) throw error
         wallets = {}
-        (data || []).forEach(w => wallets[w.wallet_type] = w)
+if (Array.isArray(data)) {
+    data.forEach(w => wallets[w.wallet_type] = w)
+} else {
+    console.warn('Unexpected wallet data:', data)
+}
 
         // fallback: ensure token symbols for known wallets
         if (!wallets.spot) wallets.spot = { balance: 0, token_symbol: 'BK' }
