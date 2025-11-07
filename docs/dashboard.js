@@ -561,6 +561,45 @@ async function handleExchange(e) {
     }
 }
 
+// Save address handler
+async function handleSaveAddress(e) {
+    if (e) e.preventDefault()
+    
+    const walletAddress = manageWalletAddress.value.trim()
+    const fullName = manageFullName.value.trim()
+    
+    if (!walletAddress || !fullName) {
+        showNotification('Please enter both wallet address and full name', true)
+        return
+    }
+    
+    try {
+        saveAddressBtn.disabled = true
+        const { error } = await supabase
+            .from('withdrawal_addresses')
+            .upsert({
+                user_id: currentUser.id,
+                wallet_address: walletAddress,
+                full_name: fullName,
+                is_default: true
+            }, { onConflict: 'user_id' })
+        
+        if (error) throw error
+        
+        // Update local state
+        savedAddress = { wallet_address: walletAddress, full_name: fullName }
+        withdrawWalletAddress.value = walletAddress
+        withdrawFullName.value = fullName
+        
+        showNotification('Address saved successfully!')
+        closeModal(manageAddressModal)
+    } catch (err) {
+        console.error('save address error', err)
+        showNotification('Failed to save address', true)
+    } finally {
+        saveAddressBtn.disabled = false
+    }
+            }
 // Remove address
 async function handleRemoveAddress() {
     try {
