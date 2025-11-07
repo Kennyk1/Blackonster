@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction History - Blackonstar AI</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:#f5f5f5; }
+  header { background:#00a2ff; color:#fff; padding:15px; text-align:center; font-weight:600; }
+  .container { padding: 15px; }
+  .filters { margin-bottom: 10px; display:flex; flex-wrap:wrap; gap:5px; }
+  .filters button { padding:8px 12px; border:none; background:#00a2ff; color:white; border-radius:8px; cursor:pointer; font-size:14px; }
+  .filters button.active { background:#0080cc; }
+  .transaction-list { list-style:none; padding:0; margin:0; }
+  .transaction-item { background:#fff; padding:12px 15px; margin-bottom:10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+  .transaction-header { display:flex; justify-content:space-between; font-weight:500; margin-bottom:5px; }
+  .transaction-body { font-size:14px; color:#333; }
+  .transaction-body span { display:block; margin-bottom:3px; }
+  @media (min-width:600px) { .transaction-header, .transaction-body { font-size:16px; } }
+</style>
+</head>
+<body>
+
+<header>Transaction History</header>
+
+<div class="container">
+  <div class="filters">
+    <button class="active" data-category="all">All</button>
+    <button data-category="deposit">Deposit</button>
+    <button data-category="withdrawal">Withdrawal</button>
+    <button data-category="checkin">Daily Check-in</button>
+    <button data-category="spin">Spin</button>
+    <button data-category="exchange">Exchange</button>
+    <button data-category="transfer">Transfer</button>
+  </div>
+
+  <ul class="transaction-list" id="transaction-list">
+    <!-- Transactions will be injected here -->
+  </ul>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+// Supabase config
+const SUPABASE_URL = 'https://nnixqnoxlhdncoppukvw.supabase.co'
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+// DOM
+const transactionList = document.getElementById('transaction-list')
+const filterButtons = document.querySelectorAll('.filters button')
+let transactions = []
+
+// Check user auth
+async function checkAuth() {
+    const { data, error } = await supabase.auth.getUser()
+    if (!data?.user || error) {
+        window.location.href = 'signup.html'
+        return null
+    }
+    return data.user
+}
+
+// Fetch transactions
+async function loadTransactions(user) {
+    let query = supabase.from('transactions').select(`
+        id,
+        amount,
+        token_symbol,
+        transaction_type,
+        description,
+        details,
+        created_at,
+        from_wallet:from_wallet_id (wallet_type),
+        to_wallet:to_wallet_id (wallet_type)
+    `).order('created_at', { ascending: false })
+
+    if (!user.isAdmin) query = query.eq('user_id', user.id) // Regular users only see their own
+
+    const { data, error } = await query
+    if (error) return console.error(error)
+    transactions = data
+    renderTransactions('all')
+}
+
+// Render transactions with category filter
+function renderTransactions(category) {
+    transactionList.innerHTML = ''
+    const filtered = category === 'all' ? transactions : transactions.filter(t => t.transaction_type.toLowerCase() === category)
+    if (filtered.length === 0) {
+        transactionList.innerHTML = '<li style="text-align:center; color:#666;">No transactions found</li>'
+        return
+    }
+
+    filtered.forEach(t => {
+        const item = document.createElement('li')
+        item.className = 'transaction-item'
+        item.innerHTML = `
+            <div class="transaction-header">
+                <span>${t.transaction_type}</span>
+                <span>${new Date(t.created_at).toLocaleString()}</span>
+            </div>
+            <div class="transaction-body">
+                <span><strong>Amount:</strong> ${parseFloat(t.amount).toFixed(4)} ${t.token_symbol}</span>
+                <span><strong>From Wallet:</strong> ${t.from_wallet?.wallet_type || '-'}</span>
+                <span><strong>To Wallet:</strong> ${t.to_wallet?.wallet_type || '-'}</span>
+                <span><strong>Description:</strong> ${t.description || '-'}</span>
+                <span><strong>Details:</strong> ${t.details ? JSON.stringify(t.details) : '-'}</span>
+            </div>
+        `
+        transactionList.appendChild(item)
+    })
+}
+
+// Filter buttons
+filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        renderTransactions(btn.dataset.category)
+    })
+})
+
+// Initialize
+(async function() {
+    const user = await checkAuth()
+    if (!user) return
+    await loadTransactions(user)
+})()
+</script>
+
+</body>
+</html>
