@@ -115,9 +115,9 @@ async function initDashboard() {
             loadCheckinStatus()
         ])
 
-        await fetchwallet() // final load after wallets ensured
-        updateBalancesUI()
-        updateTransferUI()
+        fetchwallet().catch(err => console.error(err));
+        updateBalancesUI();
+        updateTransferUI();
         
         // Show dashboard content
         walletCreationModal.style.display = 'none'
