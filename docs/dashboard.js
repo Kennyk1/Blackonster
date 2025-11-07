@@ -115,7 +115,7 @@ async function initDashboard() {
             loadCheckinStatus()
         ])
 
-        fetchwallet().catch(err => console.error(err));
+        await loadhwallets().catch(err => console.error(err));
         updateBalancesUI();
         updateTransferUI();
         
@@ -198,7 +198,7 @@ async function createUserWallets(fullName, walletAddress) {
 }
 
 // Load wallets into wallets state
-async function fetchwallet() {
+async function loadhwallets() {
     if (!currentUser) return
     try {
         const { data, error } = await supabase
