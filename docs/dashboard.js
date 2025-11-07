@@ -115,7 +115,7 @@ async function initDashboard() {
             loadCheckinStatus()
         ])
 
-        fetchWallet() // final load after wallets ensured
+        await fetchWallet() // final load after wallets ensured
         updateBalancesUI()
         updateTransferUI()
         
